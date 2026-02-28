@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Editor/OS
+.DS_Store
+.vscode/
+.idea/
+
+# Build/temp
+*.tmp
+*.bak
