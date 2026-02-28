@@ -3,6 +3,7 @@
 **Generated:** 2026-02-28
 **Evidence baseline commit:** `a33dc8b` (HEAD at time of evidence collection)
 **Evidence source commits:** `f1ba30d` (image build), `a33dc8b` (doc-only changes since evidence collection)
+**Implementation repo:** [github.com/cyntrisec/EphemeralML](https://github.com/cyntrisec/EphemeralML) — all `evidence/`, `benchmark_results_*/`, and `scripts/` paths below are relative to that repository.
 **Code changes since evidence:** Tier 1+2 parse hardening (rejection-path only, no wire format change) + doc cleanup. Zero functional changes to inference/receipt/attestation code paths.
 
 ## E2E PASS/FAIL Matrix

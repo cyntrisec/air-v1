@@ -2,6 +2,7 @@
 
 **Date:** 2026-02-28
 **Baseline commit:** `2664132` (publication tag `publication-airv1-20260228`)
+**Implementation repo:** [github.com/cyntrisec/EphemeralML](https://github.com/cyntrisec/EphemeralML) — all `evidence/`, `benchmark_results_*/`, `scripts/`, and `docs/benchmarks.md` paths below are relative to that repository.
 **Purpose:** For every public claim, this file traces the exact value, source artifact, reproduction command, commit, and caveats. No claim without evidence. No evidence without context.
 
 ## Matrix

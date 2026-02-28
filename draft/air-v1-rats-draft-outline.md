@@ -80,13 +80,13 @@ Terms to define:
 
 Include or reference CDDL from:
 
-- `spec/v1/cddl/air-v1.cddl`
+- `spec/air-v1.cddl`
 
 ## 6. Claim Semantics
 
 Reference:
 
-- `spec/v1/claim-mapping.md`
+- `spec/claim-mapping.md`
 
 Sections:
 

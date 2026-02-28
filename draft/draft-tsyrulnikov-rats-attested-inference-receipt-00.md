@@ -867,7 +867,7 @@ Organization:
 : Cyntrisec (same team, independent implementation)
 
 Implementation:
-: `spec/v1/scripts/interop_test.py`
+: `scripts/interop_test.py`
 
 Description:
 : Minimal Python verifier using `pycose` and `cbor2` libraries.
@@ -1055,7 +1055,7 @@ valid, 8 invalid) generated with a deterministic Ed25519 key pair:
 
 Vectors are JSON files containing the COSE_Sign1 bytes (hex-encoded),
 expected verification outcomes, and policy overrides for Layer 4
-tests. They are available in the repository under `spec/v1/vectors/`.
+tests. They are available in the repository under `vectors/`.
 
 Valid vectors:
 

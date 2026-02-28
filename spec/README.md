@@ -23,8 +23,8 @@ A cryptographically signed proof that an ML inference was executed inside a hard
 | [threat-model.md](threat-model.md) | Trust assumptions and threat analysis |
 | [limitations-v1.md](limitations-v1.md) | Explicit non-claims and limitations |
 | [claim-mapping.md](claim-mapping.md) | EAT claim mapping and verification semantics |
-| [cddl/air-v1.cddl](cddl/air-v1.cddl) | CDDL wire schema |
-| [vectors/](vectors/) | Golden test vectors (10 vectors: 2 valid, 8 invalid) |
+| [air-v1.cddl](air-v1.cddl) | CDDL wire schema |
+| [vectors/](../vectors/) | Golden test vectors (10 vectors: 2 valid, 8 invalid) |
 | [interop-kit.md](interop-kit.md) | Quick-start guide for external implementors |
 | [implementation-status.md](implementation-status.md) | Reference implementation status, platform coverage, and known gaps (non-normative) |
 
@@ -33,8 +33,8 @@ A cryptographically signed proof that an ML inference was executed inside a hard
 Start here if you are evaluating AIR v1 externally:
 
 1. [interop-kit.md](interop-kit.md) — minimum information to build a verifier
-2. [cddl/air-v1.cddl](cddl/air-v1.cddl) — wire schema
-3. [vectors/](vectors/) — conformance corpus (valid + invalid vectors)
+2. [air-v1.cddl](air-v1.cddl) — wire schema
+3. [vectors/](../vectors/) — conformance corpus (valid + invalid vectors)
 4. [implementation-status.md](implementation-status.md) — current Rust implementation coverage and gaps
 5. [limitations-v1.md](limitations-v1.md) — explicit non-claims
 
@@ -42,29 +42,21 @@ Start here if you are evaluating AIR v1 externally:
 
 AIR v1 receipts are COSE_Sign1 envelopes (RFC 9052) carrying CWT claims (RFC 8392) with EAT profile identification (RFC 9711). Signed with Ed25519 (RFC 8032, verify_strict).
 
-## Directories
+## Repository Layout
 
 ```
-spec/v1/
-├── cddl/           CDDL schema fragments (RFC 8610)
-├── vectors/
-│   ├── valid/      Golden test vectors (valid receipts)
-│   └── invalid/    Negative test vectors
-├── LICENSE         CC BY 4.0
-└── README.md       This file
+spec/                Normative spec documents (this directory)
+vectors/             Golden test vectors (2 valid, 8 invalid)
+draft/               IETF Internet-Draft source and built artifacts
+scripts/             Interop test script
+docs/                Publication docs, submission checklists
 ```
 
-> **Note:** A `vectors/pipeline/` directory exists for future use (vNEXT — pipeline chaining extension). It is **not** part of AIR v1 conformance scope.
+## IETF Internet-Draft (Non-Normative)
 
-## Prior Version
-
-[spec/receipt-v0.1.md](../receipt-v0.1.md) — EphemeralML internal format (FROZEN, superseded by AIR v1).
-
-## IETF Prep (Non-Normative)
-
-IETF prep drafts are maintained as non-normative working docs under `spec/v1/ietf/` on
-development branches. They are **not** part of the AIR v1 normative specification and may not be
-published on every branch/tag.
+The IETF Internet-Draft (`draft-tsyrulnikov-rats-attested-inference-receipt-00`) is maintained
+under `draft/`. It is a non-normative presentation of the AIR v1 specification for IETF review
+and is not part of the normative specification freeze.
 
 ## License
 

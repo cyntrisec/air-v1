@@ -1107,7 +1107,7 @@ Internet-Draft                   AIR v1                    February 2026
 
    Organization:  Cyntrisec (same team, independent implementation)
 
-   Implementation:  spec/v1/scripts/interop_test.py
+   Implementation:  scripts/interop_test.py
 
    Description:  Minimal Python verifier using pycose and cbor2
       libraries.  Validates COSE_Sign1 structure, Ed25519 signature, and
@@ -1446,7 +1446,7 @@ Appendix B.  Golden Vector Summary
 
    Vectors are JSON files containing the COSE_Sign1 bytes (hex-encoded),
    expected verification outcomes, and policy overrides for Layer 4
-   tests.  They are available in the repository under spec/v1/vectors/.
+   tests.  They are available in the repository under vectors/.
 
    Valid vectors:
 
