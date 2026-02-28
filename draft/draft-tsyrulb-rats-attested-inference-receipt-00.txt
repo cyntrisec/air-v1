@@ -794,33 +794,31 @@ Internet-Draft                   AIR v1                    February 2026
 
    1.   Confirm cti (key 7) is exactly 16 bytes.
 
-   2.   Confirm cti (key 7) is exactly 16 bytes.
+   2.   Confirm iat (key 6) is a non-zero unsigned integer.
 
-   3.   Confirm iat (key 6) is a non-zero unsigned integer.
-
-   4.   Confirm model_hash (key -65539) is exactly 32 bytes and not all
+   3.   Confirm model_hash (key -65539) is exactly 32 bytes and not all
         zeros.
 
-   5.   Confirm all required text string claims (iss, model_id,
+   4.   Confirm all required text string claims (iss, model_id,
         model_version, policy_version, security_mode) are non-empty and
         within reasonable bounds (implementation-defined, RECOMMENDED
         maximum 1024 bytes each).
 
-   6.   Confirm enclave_measurements (key -65543) is a map.
+   5.   Confirm enclave_measurements (key -65543) is a map.
 
-   7.   Confirm measurement_type within enclave_measurements is one of
+   6.   Confirm measurement_type within enclave_measurements is one of
         the defined values ("nitro-pcr" or "tdx-mrtd-rtmr").
 
-   8.   Confirm all pcr0/pcr1/pcr2 values are exactly 48 bytes.
+   7.   Confirm all pcr0/pcr1/pcr2 values are exactly 48 bytes.
 
-   9.   If measurement_type is "tdx-mrtd-rtmr", confirm pcr8 is absent.
+   8.   If measurement_type is "tdx-mrtd-rtmr", confirm pcr8 is absent.
         TDX measurement maps MUST NOT contain pcr8.
 
-   10.  If model_hash_scheme (key -65549) is present, confirm it is one
+   9.   If model_hash_scheme (key -65549) is present, confirm it is one
         of the defined values ("sha256-single", "sha256-concat",
         "sha256-manifest").  Unknown values MUST be rejected.
 
-   11.  Confirm the claims map contains no unknown integer keys and no
+   10.  Confirm the claims map contains no unknown integer keys and no
         duplicate keys.
 
 7.4.  Layer 4: Policy Evaluation
@@ -834,6 +832,8 @@ Internet-Draft                   AIR v1                    February 2026
    *NONCE* (challenge binding):  If the verifier supplied a nonce,
       verify eat_nonce matches.
 
+   *MODEL* (expected model):  If configured, verify model_hash and/or
+      model_id match expected values.
 
 
 
@@ -841,9 +841,6 @@ Tsyrulnikov             Expires 1 September 2026               [Page 15]
 
 Internet-Draft                   AIR v1                    February 2026
 
-
-   *MODEL* (expected model):  If configured, verify model_hash and/or
-      model_id match expected values.
 
    *PLATFORM* (expected platform):  If configured, verify
       measurement_type matches expected value.
@@ -857,11 +854,11 @@ Internet-Draft                   AIR v1                    February 2026
 
 8.1.  draft-messous-eat-ai
 
-   [I-D.messous-rats-eat-ai] defines AI-related claims for EAT,
+   [I-D.messous-eat-ai] defines an EAT profile for autonomous AI agents,
    including model identification, training metadata, and performance
    metrics.  AIR v1 is complementary: where draft-messous-eat-ai focuses
-   on broad AI provenance metadata (potentially including training and
-   evaluation details), AIR v1 focuses narrowly on per-inference
+   on broad AI agent provenance metadata (potentially including training
+   and evaluation details), AIR v1 focuses narrowly on per-inference
    execution evidence from a confidential workload.  A future version of
    AIR could adopt registered claim keys from draft-messous-eat-ai once
    they stabilize, replacing the current private-use integer keys.
@@ -890,6 +887,9 @@ Internet-Draft                   AIR v1                    February 2026
    *  The end user, auditor, or compliance officer is the *Relying
       Party* (they consume verification results).
 
+   *  The TEE hardware vendor (AWS, Intel) is the *Endorser* (their
+      attestation infrastructure anchors trust).
+
 
 
 
@@ -897,9 +897,6 @@ Tsyrulnikov             Expires 1 September 2026               [Page 16]
 
 Internet-Draft                   AIR v1                    February 2026
 
-
-   *  The TEE hardware vendor (AWS, Intel) is the *Endorser* (their
-      attestation infrastructure anchors trust).
 
    AIR v1 is a workload-emitted artifact, not a verifier-emitted
    attestation result.  It is distinct from IETF EAR (EAT Attestation
@@ -942,6 +939,9 @@ Internet-Draft                   AIR v1                    February 2026
    replay protection (only iat-based freshness).  Deployments requiring
    strong replay resistance MUST use at least one of cti deduplication
    or eat_nonce.
+
+
+
 
 
 
@@ -1326,15 +1326,15 @@ Internet-Draft                   AIR v1                    February 2026
 
 14.2.  Informative References
 
-   [I-D.messous-rats-eat-ai]
-              Messous, A. and N. Smith, "AI Claims for Entity
-              Attestation Token (EAT)", 2025.
+   [I-D.messous-eat-ai]
+              Messous, A., Morand, L., and P. C. Liu, "Entity
+              Attestation Token (EAT) Profile for Autonomous AI Agents",
+              2026.
 
    [RFC7942]  Sheffer, Y. and A. Farrel, "Improving Awareness of Running
               Code: The Implementation Status Section", BCP 205,
               RFC 7942, DOI 10.17487/RFC7942, July 2016,
               <https://www.rfc-editor.org/rfc/rfc7942>.
-
 
 
 
@@ -1469,7 +1469,7 @@ Internet-Draft                   AIR v1                    February 2026
 
    *  v1-wrong-key.json (L2: SIG_FAILED)
 
-   *  v1-wrong-alg.json (L2: BAD_ALG)
+   *  v1-wrong-alg.json (L1: BAD_ALG)
 
    *  v1-zero-model-hash.json (L3: ZERO_MODEL_HASH)
 

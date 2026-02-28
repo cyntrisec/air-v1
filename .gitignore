@@ -10,3 +10,4 @@ __pycache__/
 # Build/temp
 *.tmp
 *.bak
+draft/.refcache/

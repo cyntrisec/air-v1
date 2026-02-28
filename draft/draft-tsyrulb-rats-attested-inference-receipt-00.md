@@ -47,14 +47,16 @@ normative:
 informative:
   RFC7942:
   RFC9782:
-  I-D.messous-rats-eat-ai:
-    title: "AI Claims for Entity Attestation Token (EAT)"
+  I-D.messous-eat-ai:
+    title: "Entity Attestation Token (EAT) Profile for Autonomous AI Agents"
     author:
       -
         ins: A. Messous
       -
-        ins: N. Smith
-    date: 2025
+        ins: L. Morand
+      -
+        ins: P. C. Liu
+    date: 2026
   SCITT:
     title: "Supply Chain Integrity, Transparency and Trust (SCITT)"
     target: https://datatracker.ietf.org/wg/scitt/about/
@@ -588,34 +590,32 @@ report the specific failure.
 
 1.  Confirm `cti` (key 7) is exactly 16 bytes.
 
-2.  Confirm `cti` (key 7) is exactly 16 bytes.
+2.  Confirm `iat` (key 6) is a non-zero unsigned integer.
 
-3.  Confirm `iat` (key 6) is a non-zero unsigned integer.
-
-4.  Confirm `model_hash` (key -65539) is exactly 32 bytes and not
+3.  Confirm `model_hash` (key -65539) is exactly 32 bytes and not
     all zeros.
 
-5.  Confirm all required text string claims (iss, model_id,
+4.  Confirm all required text string claims (iss, model_id,
     model_version, policy_version, security_mode) are non-empty and
     within reasonable bounds (implementation-defined, RECOMMENDED
     maximum 1024 bytes each).
 
-6.  Confirm `enclave_measurements` (key -65543) is a map.
+5.  Confirm `enclave_measurements` (key -65543) is a map.
 
-7.  Confirm `measurement_type` within enclave_measurements is one
+6.  Confirm `measurement_type` within enclave_measurements is one
     of the defined values (`"nitro-pcr"` or `"tdx-mrtd-rtmr"`).
 
-8.  Confirm all pcr0/pcr1/pcr2 values are exactly 48 bytes.
+7.  Confirm all pcr0/pcr1/pcr2 values are exactly 48 bytes.
 
-9.  If `measurement_type` is `"tdx-mrtd-rtmr"`, confirm `pcr8` is
+8.  If `measurement_type` is `"tdx-mrtd-rtmr"`, confirm `pcr8` is
     absent. TDX measurement maps MUST NOT contain pcr8.
 
-10. If `model_hash_scheme` (key -65549) is present, confirm it is
+9.  If `model_hash_scheme` (key -65549) is present, confirm it is
     one of the defined values (`"sha256-single"`,
     `"sha256-concat"`, `"sha256-manifest"`). Unknown values MUST be
     rejected.
 
-11. Confirm the claims map contains no unknown integer keys and no
+10. Confirm the claims map contains no unknown integer keys and no
     duplicate keys.
 
 ## Layer 4: Policy Evaluation
@@ -647,14 +647,15 @@ Verifiers SHOULD document which Layer 4 policies they enforce.
 
 ## draft-messous-eat-ai
 
-{{I-D.messous-rats-eat-ai}} defines AI-related claims for EAT,
-including model identification, training metadata, and performance
-metrics. AIR v1 is complementary: where draft-messous-eat-ai focuses
-on broad AI provenance metadata (potentially including training and
-evaluation details), AIR v1 focuses narrowly on per-inference
-execution evidence from a confidential workload. A future version
-of AIR could adopt registered claim keys from draft-messous-eat-ai
-once they stabilize, replacing the current private-use integer keys.
+{{I-D.messous-eat-ai}} defines an EAT profile for autonomous AI
+agents, including model identification, training metadata, and
+performance metrics. AIR v1 is complementary: where
+draft-messous-eat-ai focuses on broad AI agent provenance metadata
+(potentially including training and evaluation details), AIR v1
+focuses narrowly on per-inference execution evidence from a
+confidential workload. A future version of AIR could adopt
+registered claim keys from draft-messous-eat-ai once they
+stabilize, replacing the current private-use integer keys.
 
 ## SCITT
 
@@ -1068,7 +1069,7 @@ Invalid vectors exercise specific failure modes across all four
 verification layers:
 
 -   `v1-wrong-key.json` (L2: SIG_FAILED)
--   `v1-wrong-alg.json` (L2: BAD_ALG)
+-   `v1-wrong-alg.json` (L1: BAD_ALG)
 -   `v1-zero-model-hash.json` (L3: ZERO_MODEL_HASH)
 -   `v1-bad-measurement-length.json` (L3: BAD_MEASUREMENT_LENGTH)
 -   `v1-nonce-mismatch.json` (L4: NONCE_MISMATCH)

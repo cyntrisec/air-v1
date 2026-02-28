@@ -2427,44 +2427,41 @@ semantics (reject non-canonical S values).<a href="#section-7.2-1.2.1" class="pi
             <p id="section-7.3-1.1.1">Confirm <code>cti</code> (key 7) is exactly 16 bytes.<a href="#section-7.3-1.1.1" class="pilcrow">¶</a></p>
 </li>
           <li id="section-7.3-1.2">
-            <p id="section-7.3-1.2.1">Confirm <code>cti</code> (key 7) is exactly 16 bytes.<a href="#section-7.3-1.2.1" class="pilcrow">¶</a></p>
+            <p id="section-7.3-1.2.1">Confirm <code>iat</code> (key 6) is a non-zero unsigned integer.<a href="#section-7.3-1.2.1" class="pilcrow">¶</a></p>
 </li>
           <li id="section-7.3-1.3">
-            <p id="section-7.3-1.3.1">Confirm <code>iat</code> (key 6) is a non-zero unsigned integer.<a href="#section-7.3-1.3.1" class="pilcrow">¶</a></p>
+            <p id="section-7.3-1.3.1">Confirm <code>model_hash</code> (key -65539) is exactly 32 bytes and not
+all zeros.<a href="#section-7.3-1.3.1" class="pilcrow">¶</a></p>
 </li>
           <li id="section-7.3-1.4">
-            <p id="section-7.3-1.4.1">Confirm <code>model_hash</code> (key -65539) is exactly 32 bytes and not
-all zeros.<a href="#section-7.3-1.4.1" class="pilcrow">¶</a></p>
-</li>
-          <li id="section-7.3-1.5">
-            <p id="section-7.3-1.5.1">Confirm all required text string claims (iss, model_id,
+            <p id="section-7.3-1.4.1">Confirm all required text string claims (iss, model_id,
 model_version, policy_version, security_mode) are non-empty and
 within reasonable bounds (implementation-defined, <span class="bcp14">RECOMMENDED</span>
-maximum 1024 bytes each).<a href="#section-7.3-1.5.1" class="pilcrow">¶</a></p>
+maximum 1024 bytes each).<a href="#section-7.3-1.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-7.3-1.5">
+            <p id="section-7.3-1.5.1">Confirm <code>enclave_measurements</code> (key -65543) is a map.<a href="#section-7.3-1.5.1" class="pilcrow">¶</a></p>
 </li>
           <li id="section-7.3-1.6">
-            <p id="section-7.3-1.6.1">Confirm <code>enclave_measurements</code> (key -65543) is a map.<a href="#section-7.3-1.6.1" class="pilcrow">¶</a></p>
+            <p id="section-7.3-1.6.1">Confirm <code>measurement_type</code> within enclave_measurements is one
+of the defined values (<code>"nitro-pcr"</code> or <code>"tdx-mrtd-rtmr"</code>).<a href="#section-7.3-1.6.1" class="pilcrow">¶</a></p>
 </li>
           <li id="section-7.3-1.7">
-            <p id="section-7.3-1.7.1">Confirm <code>measurement_type</code> within enclave_measurements is one
-of the defined values (<code>"nitro-pcr"</code> or <code>"tdx-mrtd-rtmr"</code>).<a href="#section-7.3-1.7.1" class="pilcrow">¶</a></p>
+            <p id="section-7.3-1.7.1">Confirm all pcr0/pcr1/pcr2 values are exactly 48 bytes.<a href="#section-7.3-1.7.1" class="pilcrow">¶</a></p>
 </li>
           <li id="section-7.3-1.8">
-            <p id="section-7.3-1.8.1">Confirm all pcr0/pcr1/pcr2 values are exactly 48 bytes.<a href="#section-7.3-1.8.1" class="pilcrow">¶</a></p>
+            <p id="section-7.3-1.8.1">If <code>measurement_type</code> is <code>"tdx-mrtd-rtmr"</code>, confirm <code>pcr8</code> is
+absent. TDX measurement maps <span class="bcp14">MUST NOT</span> contain pcr8.<a href="#section-7.3-1.8.1" class="pilcrow">¶</a></p>
 </li>
           <li id="section-7.3-1.9">
-            <p id="section-7.3-1.9.1">If <code>measurement_type</code> is <code>"tdx-mrtd-rtmr"</code>, confirm <code>pcr8</code> is
-absent. TDX measurement maps <span class="bcp14">MUST NOT</span> contain pcr8.<a href="#section-7.3-1.9.1" class="pilcrow">¶</a></p>
-</li>
-          <li id="section-7.3-1.10">
-            <p id="section-7.3-1.10.1">If <code>model_hash_scheme</code> (key -65549) is present, confirm it is
+            <p id="section-7.3-1.9.1">If <code>model_hash_scheme</code> (key -65549) is present, confirm it is
 one of the defined values (<code>"sha256-single"</code>,
 <code>"sha256-concat"</code>, <code>"sha256-manifest"</code>). Unknown values <span class="bcp14">MUST</span> be
-rejected.<a href="#section-7.3-1.10.1" class="pilcrow">¶</a></p>
+rejected.<a href="#section-7.3-1.9.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-7.3-1.11">
-            <p id="section-7.3-1.11.1">Confirm the claims map contains no unknown integer keys and no
-duplicate keys.<a href="#section-7.3-1.11.1" class="pilcrow">¶</a></p>
+          <li id="section-7.3-1.10">
+            <p id="section-7.3-1.10.1">Confirm the claims map contains no unknown integer keys and no
+duplicate keys.<a href="#section-7.3-1.10.1" class="pilcrow">¶</a></p>
 </li>
         </ol>
 </section>
@@ -2525,14 +2522,15 @@ values.<a href="#section-7.4-2.10.1" class="pilcrow">¶</a></p>
         <h3 id="name-draft-messous-eat-ai">
 <a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-draft-messous-eat-ai" class="section-name selfRef">draft-messous-eat-ai</a>
         </h3>
-<p id="section-8.1-1"><span>[<a href="#I-D.messous-rats-eat-ai" class="cite xref">I-D.messous-rats-eat-ai</a>]</span> defines AI-related claims for EAT,
-including model identification, training metadata, and performance
-metrics. AIR v1 is complementary: where draft-messous-eat-ai focuses
-on broad AI provenance metadata (potentially including training and
-evaluation details), AIR v1 focuses narrowly on per-inference
-execution evidence from a confidential workload. A future version
-of AIR could adopt registered claim keys from draft-messous-eat-ai
-once they stabilize, replacing the current private-use integer keys.<a href="#section-8.1-1" class="pilcrow">¶</a></p>
+<p id="section-8.1-1"><span>[<a href="#I-D.messous-eat-ai" class="cite xref">I-D.messous-eat-ai</a>]</span> defines an EAT profile for autonomous AI
+agents, including model identification, training metadata, and
+performance metrics. AIR v1 is complementary: where
+draft-messous-eat-ai focuses on broad AI agent provenance metadata
+(potentially including training and evaluation details), AIR v1
+focuses narrowly on per-inference execution evidence from a
+confidential workload. A future version of AIR could adopt
+registered claim keys from draft-messous-eat-ai once they
+stabilize, replacing the current private-use integer keys.<a href="#section-8.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="scitt">
@@ -3107,9 +3105,9 @@ implementation repository.<a href="#section-13.2-3" class="pilcrow">¶</a></p>
 <a href="#section-14.2" class="section-number selfRef">14.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
         </h3>
 <dl class="references">
-<dt id="I-D.messous-rats-eat-ai">[I-D.messous-rats-eat-ai]</dt>
+<dt id="I-D.messous-eat-ai">[I-D.messous-eat-ai]</dt>
         <dd>
-<span class="refAuthor">Messous, A.</span> and <span class="refAuthor">N. Smith</span>, <span class="refTitle">"AI Claims for Entity Attestation Token (EAT)"</span>, <time datetime="2025" class="refDate">2025</time>. </dd>
+<span class="refAuthor">Messous, A.</span>, <span class="refAuthor">Morand, L.</span>, and <span class="refAuthor">P. C. Liu</span>, <span class="refTitle">"Entity Attestation Token (EAT) Profile for Autonomous AI Agents"</span>, <time datetime="2026" class="refDate">2026</time>. </dd>
 <dd class="break"></dd>
 <dt id="RFC7942">[RFC7942]</dt>
         <dd>
@@ -3242,7 +3240,7 @@ verification layers:<a href="#appendix-B-6" class="pilcrow">¶</a></p>
           <p id="appendix-B-7.1.1"><code>v1-wrong-key.json</code> (L2: SIG_FAILED)<a href="#appendix-B-7.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="appendix-B-7.2">
-          <p id="appendix-B-7.2.1"><code>v1-wrong-alg.json</code> (L2: BAD_ALG)<a href="#appendix-B-7.2.1" class="pilcrow">¶</a></p>
+          <p id="appendix-B-7.2.1"><code>v1-wrong-alg.json</code> (L1: BAD_ALG)<a href="#appendix-B-7.2.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="appendix-B-7.3">
           <p id="appendix-B-7.3.1"><code>v1-zero-model-hash.json</code> (L3: ZERO_MODEL_HASH)<a href="#appendix-B-7.3.1" class="pilcrow">¶</a></p>
