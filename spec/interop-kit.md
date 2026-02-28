@@ -176,10 +176,10 @@ def verify_air_v1(receipt_bytes, public_key_bytes):
 
 | File | Purpose |
 |------|---------|
-| [cddl/air-v1.cddl](cddl/air-v1.cddl) | Formal CDDL schema |
+| [air-v1.cddl](air-v1.cddl) | Formal CDDL schema |
 | [claim-mapping.md](claim-mapping.md) | Full claim semantics and verification rules |
 | [dependencies.md](dependencies.md) | Normative RFC references |
-| [vectors/](vectors/) | All golden test vectors |
+| [vectors/](../vectors/) | All golden test vectors |
 | [scope-v1.md](scope-v1.md) | What v1 does and does not define |
 | [limitations-v1.md](limitations-v1.md) | Explicit non-claims |
 
@@ -188,7 +188,7 @@ def verify_air_v1(receipt_bytes, public_key_bytes):
 | Language | Library / Package | Status | Coverage | Last Verified | Details |
 |----------|--------------------|--------|----------|---------------|---------|
 | Rust | `ephemeral-ml-common` (this repo) | Reference implementation — **emitted in production E2E** | AIR verifier + vectors + policy hooks + live emission | 2026-02-25 | [implementation-status.md](implementation-status.md) |
-| Python | `spec/v1/scripts/interop_test.py` | Same-team independent verifier (third-party validation pending) | AIR v1 vector verification harness (COSE parse + Sig_structure verify + claims/policy checks) | 2026-02-25 (local + fresh VM `10/10`) | M4b: external third-party interop run pending |
+| Python | `scripts/interop_test.py` | Same-team independent verifier (third-party validation pending) | AIR v1 vector verification harness (COSE parse + Sig_structure verify + claims/policy checks) | 2026-02-25 (local + fresh VM `10/10`) | M4b: external third-party interop run pending |
 
 To register your implementation, open an issue or PR.
 

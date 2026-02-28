@@ -60,4 +60,4 @@ and is not part of the normative specification freeze.
 
 ## License
 
-CC BY 4.0 — See [LICENSE](LICENSE).
+CC BY 4.0 — See [LICENSE](../LICENSE).
