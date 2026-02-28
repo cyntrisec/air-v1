@@ -3,7 +3,8 @@
 **Generated:** 2026-02-28
 **Evidence baseline commit:** `a33dc8b` (HEAD at time of evidence collection)
 **Evidence source commits:** `f1ba30d` (image build), `a33dc8b` (doc-only changes since evidence collection)
-**Implementation repo:** [github.com/cyntrisec/EphemeralML](https://github.com/cyntrisec/EphemeralML) — all `evidence/`, `benchmark_results_*/`, and `scripts/` paths below are relative to that repository.
+**Implementation repo:** [github.com/cyntrisec/EphemeralML](https://github.com/cyntrisec/EphemeralML) — technical provenance source for E2E runs and benchmark scripts.
+**Path note:** `evidence/publication-airv1-20260228/` references in this report describe the canonical evidence location in EphemeralML (source repo), not a local directory in this standalone AIR repository.
 **Code changes since evidence:** Tier 1+2 parse hardening (rejection-path only, no wire format change) + doc cleanup. Zero functional changes to inference/receipt/attestation code paths.
 
 ## E2E PASS/FAIL Matrix
@@ -77,7 +78,7 @@
 
 ## Publication Directory Structure
 
-All evidence is self-contained under `evidence/publication-airv1-20260228/`:
+In the implementation repo (EphemeralML), evidence is self-contained under `evidence/publication-airv1-20260228/`:
 
 ```
 evidence/publication-airv1-20260228/
