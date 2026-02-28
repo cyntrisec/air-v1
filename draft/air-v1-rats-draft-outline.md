@@ -10,8 +10,8 @@ This is a non-normative authoring outline for M5 preparation.
 
 ## 1. Draft Metadata (placeholder)
 
-- `draft-<author>-rats-air-receipts-00`
-- Authors: TBD
+- `draft-tsyrulb-rats-attested-inference-receipt-00`
+- Authors: Borys Tsyrulnikov (Cyntrisec)
 - WG adoption status: Individual draft (pre-adoption)
 
 ## 2. Abstract (draft shape)
