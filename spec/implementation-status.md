@@ -224,9 +224,9 @@ Still needed for M4 exit:
 
 ## 8. Test Coverage
 
-505 tests passing across the workspace (`cargo test --workspace --features mock`):
+575 tests passing across the workspace (`cargo test -q`):
 
 - 83 verification tests (AIR v1 4-layer verifier + golden vectors + platform attestation)
 - 59 receipt tests (legacy + AIR v1 round-trip, signing, compliance, property-based)
-- 7 conformance vector tests (ct_001 through ct_020)
+- 16 conformance vector tests (golden vector validation)
 - Remaining: transport, pipeline, crypto, E2E integration, model handling

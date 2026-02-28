@@ -34,7 +34,7 @@ Attested Inference Receipt (AIR) v1.0 is the first frozen release of the receipt
 
 - `ephemeral-ml-common` crate: `build_air_v1()`, `parse_air_v1()`, `verify_air_v1()`
 - 240 tests in `common` (224 unit + 16 conformance vector tests)
-- 574 total tests across the workspace
+- 575 total tests across the workspace
 
 ## Key decisions
 
