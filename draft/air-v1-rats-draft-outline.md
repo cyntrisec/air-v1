@@ -10,7 +10,7 @@ This is a non-normative authoring outline for M5 preparation.
 
 ## 1. Draft Metadata (placeholder)
 
-- `draft-tsyrulb-rats-attested-inference-receipt-00`
+- `draft-tsyrulnikov-rats-attested-inference-receipt-00`
 - Authors: Borys Tsyrulnikov (Cyntrisec)
 - WG adoption status: Individual draft (pre-adoption)
 
