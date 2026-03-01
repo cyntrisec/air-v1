@@ -862,7 +862,7 @@ Description:
   with structured error codes.
 
 Maturity:
-: Production. Emitted in E2E paths on three platforms.
+: Deployment-validated. Emitted in E2E paths on three platforms.
 
 Coverage:
 : 575 tests passing (including 16 AIR v1 conformance vector tests).
@@ -886,8 +886,8 @@ Estimated receipt emission crypto path for a 1 KB request + 4 KB response
 plus a 1 KB attestation hash and Ed25519 signing is
 36.852 us median (36.958 us p95) per inference on this host.
 
-Independent retest (non-normative):
-: A second independent 5-run retest on the same AWS instance class
+Separate retest run (non-normative):
+: A second 5-run retest on the same AWS instance class
   (`air_v1_aws_retest_bench_5runs_2026-03-01`) reproduced SHA-256 and
   Ed25519 primitive timings within approximately 1%, and reproduced the
   receipt emission crypto estimate at 37.035 us median (+0.5% versus the
