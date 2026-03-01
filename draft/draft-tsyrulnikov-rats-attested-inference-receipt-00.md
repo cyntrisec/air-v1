@@ -858,6 +858,28 @@ Maturity:
 Coverage:
 : 575 tests passing (including 16 AIR v1 conformance vector tests).
 
+Performance snapshot (non-normative):
+: 2026-03-01 AWS build-host microbenchmark aggregate
+  (`air_v1_aws_build_bench_5runs_2026-03-01`) measured crypto and verifier
+  costs on an AWS `c6i.xlarge` Linux host after compiling
+  `ephemeralml-verify` from source (valid AIR vector size 599 bytes).
+  Values below are 5-run median and p95:
+
+| Metric | Median | p95 | Notes |
+|:-------|-------:|----:|:------|
+| SHA-256 (1 KB) | 0.931 us | 0.931 us | OpenSSL 3.2.2 speed conversion |
+| SHA-256 (4 KB) | 3.227 us | 3.227 us | OpenSSL 3.2.2 speed conversion |
+| Ed25519 sign | 31.763 us | 31.887 us | OpenSSL 3.2.2 speed |
+| Ed25519 verify | 102.512 us | 103.338 us | OpenSSL 3.2.2 speed |
+| AIR verify (Rust CLI, process-per-call) | 1,533.100 us | 1,558.608 us | Includes process spawn overhead |
+
+Estimated receipt emission crypto path for a 1 KB request + 4 KB response
+plus a 1 KB attestation hash and Ed25519 signing is
+36.852 us median (36.958 us p95) per inference on this host.
+These measurements are
+environment-specific and informative only; AIR v1 does not define
+performance requirements.
+
 Contact:
 : borys@cyntrisec.com
 
