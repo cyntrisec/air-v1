@@ -4,8 +4,8 @@
 
 RATS                                                      B. Tsyrulnikov
 Internet-Draft                                                 Cyntrisec
-Intended status: Informational                          28 February 2026
-Expires: 1 September 2026
+Intended status: Informational                              1 March 2026
+Expires: 2 September 2026
 
 
 Attested Inference Receipt (AIR): A COSE/CWT Profile for Confidential AI
@@ -43,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 1 September 2026.
+   This Internet-Draft will expire on 2 September 2026.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Tsyrulnikov             Expires 1 September 2026                [Page 1]
+Tsyrulnikov             Expires 2 September 2026                [Page 1]
 
-Internet-Draft                   AIR v1                    February 2026
+Internet-Draft                   AIR v1                       March 2026
 
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Tsyrulnikov             Expires 1 September 2026                [Page 2]
+Tsyrulnikov             Expires 2 September 2026                [Page 2]
 
-Internet-Draft                   AIR v1                    February 2026
+Internet-Draft                   AIR v1                       March 2026
 
 
      7.4.  Layer 4: Policy Evaluation  . . . . . . . . . . . . . . .  15
@@ -137,18 +137,18 @@ Internet-Draft                   AIR v1                    February 2026
    11. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  19
    12. Implementation Status . . . . . . . . . . . . . . . . . . . .  20
      12.1.  Reference Implementation (Rust)  . . . . . . . . . . . .  20
-     12.2.  Python Interop Verifier  . . . . . . . . . . . . . . . .  20
-     12.3.  E2E Validation . . . . . . . . . . . . . . . . . . . . .  21
-   13. Examples  . . . . . . . . . . . . . . . . . . . . . . . . . .  21
-     13.1.  Valid Receipt Walkthrough  . . . . . . . . . . . . . . .  21
-     13.2.  Invalid Receipt Categories . . . . . . . . . . . . . . .  22
-   14. References  . . . . . . . . . . . . . . . . . . . . . . . . .  23
-     14.1.  Normative References . . . . . . . . . . . . . . . . . .  23
-     14.2.  Informative References . . . . . . . . . . . . . . . . .  24
-   Appendix A.  Full CDDL Schema . . . . . . . . . . . . . . . . . .  25
-   Appendix B.  Golden Vector Summary  . . . . . . . . . . . . . . .  26
-   Acknowledgments . . . . . . . . . . . . . . . . . . . . . . . . .  27
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  27
+     12.2.  Python Interop Verifier  . . . . . . . . . . . . . . . .  22
+     12.3.  E2E Validation . . . . . . . . . . . . . . . . . . . . .  22
+   13. Examples  . . . . . . . . . . . . . . . . . . . . . . . . . .  22
+     13.1.  Valid Receipt Walkthrough  . . . . . . . . . . . . . . .  22
+     13.2.  Invalid Receipt Categories . . . . . . . . . . . . . . .  23
+   14. References  . . . . . . . . . . . . . . . . . . . . . . . . .  24
+     14.1.  Normative References . . . . . . . . . . . . . . . . . .  24
+     14.2.  Informative References . . . . . . . . . . . . . . . . .  25
+   Appendix A.  Full CDDL Schema . . . . . . . . . . . . . . . . . .  26
+   Appendix B.  Golden Vector Summary  . . . . . . . . . . . . . . .  27
+   Acknowledgments . . . . . . . . . . . . . . . . . . . . . . . . .  28
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  28
 
 1.  Introduction
 
@@ -165,9 +165,9 @@ Internet-Draft                   AIR v1                    February 2026
 
 
 
-Tsyrulnikov             Expires 1 September 2026                [Page 3]
+Tsyrulnikov             Expires 2 September 2026                [Page 3]
 
-Internet-Draft                   AIR v1                    February 2026
+Internet-Draft                   AIR v1                       March 2026
 
 
    The Attested Inference Receipt (AIR) fills this gap.  An AIR receipt
@@ -182,6 +182,12 @@ Internet-Draft                   AIR v1                    February 2026
    model inside one attested workload produces one receipt.  Pipeline
    chaining, multi-stage proofs, and integration with transparency logs
    (such as SCITT [SCITT]) are deferred to future versions.
+
+   AIR v1 defines the per-inference receipt as the base primitive.
+   Future AIR profiles may define aggregation mechanisms for high-
+   throughput deployments (for example, Merkle-root commitments over
+   multiple inference events) while preserving the same verification
+   semantics.  Such aggregation mechanisms are out of scope for AIR v1.
 
 1.1.  Goals
 
@@ -212,19 +218,19 @@ Internet-Draft                   AIR v1                    February 2026
    *  Specify attestation document verification procedures (these are
       platform-specific).
 
+
+
+
+Tsyrulnikov             Expires 2 September 2026                [Page 4]
+
+Internet-Draft                   AIR v1                       March 2026
+
+
    *  Prove data deletion or model correctness.
 
    *  Provide regulatory certification or compliance guarantees.
 
    *  Define pipeline chaining or multi-inference receipts.
-
-
-
-
-Tsyrulnikov             Expires 1 September 2026                [Page 4]
-
-Internet-Draft                   AIR v1                    February 2026
-
 
 2.  Requirements Language
 
@@ -265,22 +271,22 @@ Internet-Draft                   AIR v1                    February 2026
       identify the workload code and configuration.
 
    Receipt:  In this document, "receipt" always refers to an AIR
+
+
+
+
+
+
+Tsyrulnikov             Expires 2 September 2026                [Page 5]
+
+Internet-Draft                   AIR v1                       March 2026
+
+
       receipt.  Note that this differs from the SCITT usage of "receipt"
       (which refers to a countersigned statement from a transparency
       service).  The two are complementary: a future version could
       register an AIR receipt with a SCITT transparency service and
       receive a SCITT receipt in return.
-
-
-
-
-
-
-
-Tsyrulnikov             Expires 1 September 2026                [Page 5]
-
-Internet-Draft                   AIR v1                    February 2026
-
 
 4.  AIR v1 Receipt Format
 
@@ -327,15 +333,9 @@ Internet-Draft                   AIR v1                    February 2026
 
 
 
-
-
-
-
-
-
-Tsyrulnikov             Expires 1 September 2026                [Page 6]
+Tsyrulnikov             Expires 2 September 2026                [Page 6]
 
-Internet-Draft                   AIR v1                    February 2026
+Internet-Draft                   AIR v1                       March 2026
 
 
 4.3.  Unprotected Header
@@ -389,9 +389,9 @@ Internet-Draft                   AIR v1                    February 2026
 
 
 
-Tsyrulnikov             Expires 1 September 2026                [Page 7]
+Tsyrulnikov             Expires 2 September 2026                [Page 7]
 
-Internet-Draft                   AIR v1                    February 2026
+Internet-Draft                   AIR v1                       March 2026
 
 
      -65537 => tstr,               ; model_id
@@ -445,9 +445,9 @@ Internet-Draft                   AIR v1                    February 2026
 
 
 
-Tsyrulnikov             Expires 1 September 2026                [Page 8]
+Tsyrulnikov             Expires 2 September 2026                [Page 8]
 
-Internet-Draft                   AIR v1                    February 2026
+Internet-Draft                   AIR v1                       March 2026
 
 
 5.1.2.  iat (Issued At) -- key 6
@@ -467,7 +467,9 @@ Internet-Draft                   AIR v1                    February 2026
 5.1.4.  eat_profile -- key 265
 
    The fixed string value "https://spec.cyntrisec.com/air/v1".
-   Verifiers MUST reject receipts with unknown eat_profile values.
+   Verifiers MUST reject receipts with unknown eat_profile values.  The
+   value is an identifier, not a dereference requirement.  Verifiers
+   MUST NOT require network retrieval of this URI during validation.
 
 5.1.5.  eat_nonce -- key 10
 
@@ -499,11 +501,9 @@ Internet-Draft                   AIR v1                    February 2026
 
 
 
-
-
-Tsyrulnikov             Expires 1 September 2026                [Page 9]
+Tsyrulnikov             Expires 2 September 2026                [Page 9]
 
-Internet-Draft                   AIR v1                    February 2026
+Internet-Draft                   AIR v1                       March 2026
 
 
 5.2.3.  model_hash -- key -65539
@@ -557,9 +557,9 @@ Internet-Draft                   AIR v1                    February 2026
 
 
 
-Tsyrulnikov             Expires 1 September 2026               [Page 10]
+Tsyrulnikov             Expires 2 September 2026               [Page 10]
 
-Internet-Draft                   AIR v1                    February 2026
+Internet-Draft                   AIR v1                       March 2026
 
 
        +--------------------+---------+----------+----------------+
@@ -613,9 +613,9 @@ Internet-Draft                   AIR v1                    February 2026
 
 
 
-Tsyrulnikov             Expires 1 September 2026               [Page 11]
+Tsyrulnikov             Expires 2 September 2026               [Page 11]
 
-Internet-Draft                   AIR v1                    February 2026
+Internet-Draft                   AIR v1                       March 2026
 
 
 5.2.11.  memory_peak_mb -- key -65547
@@ -663,16 +663,21 @@ Internet-Draft                   AIR v1                    February 2026
    This section consolidates the mandatory profile positions per
    [RFC9711] Section 6.3.
 
-   1.   *Profile identifier*: URI "https://spec.cyntrisec.com/air/v1"
-        (carried in eat_profile, key 265).
 
 
 
 
-Tsyrulnikov             Expires 1 September 2026               [Page 12]
+
+
+Tsyrulnikov             Expires 2 September 2026               [Page 12]
 
-Internet-Draft                   AIR v1                    February 2026
+Internet-Draft                   AIR v1                       March 2026
 
+
+   1.   *Profile identifier*: URI "https://spec.cyntrisec.com/air/v1"
+        (carried in eat_profile, key 265).  This URI is used as an
+        opaque identifier and does not imply that validation depends on
+        a hosted verifier service.
 
    2.   *Encoding*: CBOR only ([RFC8949]).  JSON serialization is not
         defined.
@@ -718,17 +723,15 @@ Internet-Draft                   AIR v1                    February 2026
         [RFC8949] Section 4.2.1 (shorter encoded form first, then
         bytewise lexicographic).
 
+
+
+Tsyrulnikov             Expires 2 September 2026               [Page 13]
+
+Internet-Draft                   AIR v1                       March 2026
+
+
    13.  *Closed claims map*: The claims map is closed.  Unknown integer
         keys MUST be rejected.  Duplicate keys MUST be rejected.
-
-
-
-
-
-Tsyrulnikov             Expires 1 September 2026               [Page 13]
-
-Internet-Draft                   AIR v1                    February 2026
-
 
    14.  *Unprotected header*: MUST be empty.  All header parameters are
         carried in the protected header.  The CDDL permits an optional
@@ -778,12 +781,9 @@ Internet-Draft                   AIR v1                    February 2026
 
 
 
-
-
-
-Tsyrulnikov             Expires 1 September 2026               [Page 14]
+Tsyrulnikov             Expires 2 September 2026               [Page 14]
 
-Internet-Draft                   AIR v1                    February 2026
+Internet-Draft                   AIR v1                       March 2026
 
 
    2.  Verify the Ed25519 signature over Sig_structure1 using the
@@ -837,9 +837,9 @@ Internet-Draft                   AIR v1                    February 2026
 
 
 
-Tsyrulnikov             Expires 1 September 2026               [Page 15]
+Tsyrulnikov             Expires 2 September 2026               [Page 15]
 
-Internet-Draft                   AIR v1                    February 2026
+Internet-Draft                   AIR v1                       March 2026
 
 
    *PLATFORM* (expected platform):  If configured, verify
@@ -893,9 +893,9 @@ Internet-Draft                   AIR v1                    February 2026
 
 
 
-Tsyrulnikov             Expires 1 September 2026               [Page 16]
+Tsyrulnikov             Expires 2 September 2026               [Page 16]
 
-Internet-Draft                   AIR v1                    February 2026
+Internet-Draft                   AIR v1                       March 2026
 
 
    AIR v1 is a workload-emitted artifact, not a verifier-emitted
@@ -949,9 +949,9 @@ Internet-Draft                   AIR v1                    February 2026
 
 
 
-Tsyrulnikov             Expires 1 September 2026               [Page 17]
+Tsyrulnikov             Expires 2 September 2026               [Page 17]
 
-Internet-Draft                   AIR v1                    February 2026
+Internet-Draft                   AIR v1                       March 2026
 
 
 9.4.  Model Hash Limitations
@@ -1005,9 +1005,9 @@ Internet-Draft                   AIR v1                    February 2026
 
 
 
-Tsyrulnikov             Expires 1 September 2026               [Page 18]
+Tsyrulnikov             Expires 2 September 2026               [Page 18]
 
-Internet-Draft                   AIR v1                    February 2026
+Internet-Draft                   AIR v1                       March 2026
 
 
 9.9.  Deterministic Encoding
@@ -1061,9 +1061,9 @@ Internet-Draft                   AIR v1                    February 2026
 
 
 
-Tsyrulnikov             Expires 1 September 2026               [Page 19]
+Tsyrulnikov             Expires 2 September 2026               [Page 19]
 
-Internet-Draft                   AIR v1                    February 2026
+Internet-Draft                   AIR v1                       March 2026
 
 
    AIR v1 uses negative integer keys in the CWT private-use range (keys
@@ -1096,16 +1096,91 @@ Internet-Draft                   AIR v1                    February 2026
       signing.  Verifier implements all four layers (parse, crypto,
       claims, policy) with structured error codes.
 
-   Maturity:  Production.  Emitted in E2E paths on three platforms.
+   Maturity:  Deployment-validated.  Emitted in E2E paths on three
+      platforms.
 
    Coverage:  575 tests passing (including 16 AIR v1 conformance vector
       tests).
 
+   Performance snapshot (non-normative):  2026-03-01 AWS build-host
+      microbenchmark aggregate (air_v1_aws_build_bench_5runs_2026-03-01)
+      measured crypto and verifier costs on an AWS c6i.xlarge Linux host
+      after compiling ephemeralml-verify from source (valid AIR vector
+      size 599 bytes).  Values below are 5-run median and p95:
+
+
+
+
+
+
+
+
+
+
+Tsyrulnikov             Expires 2 September 2026               [Page 20]
+
+Internet-Draft                   AIR v1                       March 2026
+
+
+   +=======================+===========+===========+==================+
+   | Metric                |    Median |       p95 | Notes            |
+   +=======================+===========+===========+==================+
+   | SHA-256 (1 KB)        |  0.931 us |  0.931 us | OpenSSL 3.2.2    |
+   |                       |           |           | speed conversion |
+   +-----------------------+-----------+-----------+------------------+
+   | SHA-256 (4 KB)        |  3.227 us |  3.227 us | OpenSSL 3.2.2    |
+   |                       |           |           | speed conversion |
+   +-----------------------+-----------+-----------+------------------+
+   | Ed25519 sign          | 31.763 us | 31.887 us | OpenSSL 3.2.2    |
+   |                       |           |           | speed            |
+   +-----------------------+-----------+-----------+------------------+
+   | Ed25519 verify        |   102.512 |   103.338 | OpenSSL 3.2.2    |
+   |                       |        us |        us | speed            |
+   +-----------------------+-----------+-----------+------------------+
+   | AIR verify (Rust CLI, | 1,533.100 | 1,558.608 | Includes process |
+   | process-per-call)     |        us |        us | spawn overhead   |
+   +-----------------------+-----------+-----------+------------------+
+
+                                 Table 5
+
+   Estimated receipt emission crypto path for a 1 KB request + 4 KB
+   response plus a 1 KB attestation hash and Ed25519 signing is 36.852
+   us median (36.958 us p95) per inference on this host.
+
+   Separate retest run (non-normative):  A second 5-run retest on the
+      same AWS instance class (air_v1_aws_retest_bench_5runs_2026-03-01)
+      reproduced SHA-256 and Ed25519 primitive timings within
+      approximately 1%, and reproduced the receipt emission crypto
+      estimate at 37.035 us median (+0.5% versus the baseline snapshot).
+      The Rust CLI process-per-call verify metric increased by +14.7% in
+      the retest; this metric includes process fork/exec/linker overhead
+      and is environment-sensitive.  For this reason, AIR v1 performance
+      interpretation should prioritize the per-inference crypto path
+      estimate rather than CLI process-per-call latency.
+
+   Environment-sensitivity check (non-normative):  A separate run on GCP
+      n2-standard-4 (Intel Xeon @ 2.80 GHz, OpenSSL 3.0.13, Ubuntu
+      24.04) measured the emit crypto path at 62.178 us median.  The
+      absolute values differ from AWS due to OpenSSL version (3.0 vs 3.2
+      assembly paths) and CPU generation, not protocol logic.  This
+      confirms the AIR crypto path remains in tens of microseconds
+      across tested environments.
+
+   These measurements are environment-specific and informative only; AIR
+   v1 does not define performance requirements.
+
    Contact:  borys@cyntrisec.com
+
+
+
+Tsyrulnikov             Expires 2 September 2026               [Page 21]
+
+Internet-Draft                   AIR v1                       March 2026
+
 
 12.2.  Python Interop Verifier
 
-   Organization:  Cyntrisec (same team, independent implementation)
+   Organization:  Cyntrisec (same team, separate Python implementation)
 
    Implementation:  scripts/interop_test.py
 
@@ -1114,13 +1189,6 @@ Internet-Draft                   AIR v1                    February 2026
       claim presence.
 
    Maturity:  Test/interop.
-
-
-
-Tsyrulnikov             Expires 1 September 2026               [Page 20]
-
-Internet-Draft                   AIR v1                    February 2026
-
 
 12.3.  E2E Validation
 
@@ -1138,7 +1206,7 @@ Internet-Draft                   AIR v1                    February 2026
    | highgpu-1g)                                |        |            |
    +--------------------------------------------+--------+------------+
 
-                                 Table 5
+                                 Table 6
 
 13.  Examples
 
@@ -1158,6 +1226,14 @@ Internet-Draft                   AIR v1                    February 2026
 
    The protected header decodes to:
 
+
+
+
+Tsyrulnikov             Expires 2 September 2026               [Page 22]
+
+Internet-Draft                   AIR v1                       March 2026
+
+
    {
      1: -8,    / alg: EdDSA /
      3: 61     / content type: application/cwt /
@@ -1165,18 +1241,6 @@ Internet-Draft                   AIR v1                    February 2026
 
    The payload (CWT claims map) includes 16 required claims plus the EAT
    profile:
-
-
-
-
-
-
-
-
-Tsyrulnikov             Expires 1 September 2026               [Page 21]
-
-Internet-Draft                   AIR v1                    February 2026
-
 
  {
    1: "cyntrisec.com",                          / iss /
@@ -1221,17 +1285,9 @@ Internet-Draft                   AIR v1                    February 2026
 
 
 
-
-
-
-
-
-
-
-
-Tsyrulnikov             Expires 1 September 2026               [Page 22]
+Tsyrulnikov             Expires 2 September 2026               [Page 23]
 
-Internet-Draft                   AIR v1                    February 2026
+Internet-Draft                   AIR v1                       March 2026
 
 
         +========================+=======+========================+
@@ -1254,7 +1310,7 @@ Internet-Draft                   AIR v1                    February 2026
         | stale-iat              | L4    | TIMESTAMP_STALE        |
         +------------------------+-------+------------------------+
 
-                                  Table 6
+                                  Table 7
 
    Complete vector files (JSON with hex-encoded COSE bytes, expected
    failure codes, and policy overrides) are available in the reference
@@ -1285,9 +1341,9 @@ Internet-Draft                   AIR v1                    February 2026
 
 
 
-Tsyrulnikov             Expires 1 September 2026               [Page 23]
+Tsyrulnikov             Expires 2 September 2026               [Page 24]
 
-Internet-Draft                   AIR v1                    February 2026
+Internet-Draft                   AIR v1                       March 2026
 
 
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
@@ -1341,9 +1397,9 @@ Internet-Draft                   AIR v1                    February 2026
 
 
 
-Tsyrulnikov             Expires 1 September 2026               [Page 24]
+Tsyrulnikov             Expires 2 September 2026               [Page 25]
 
-Internet-Draft                   AIR v1                    February 2026
+Internet-Draft                   AIR v1                       March 2026
 
 
    [RFC9782]  Lundblade, L., Birkholz, H., and T. Fossati, "Entity
@@ -1397,9 +1453,9 @@ Appendix A.  Full CDDL Schema
 
 
 
-Tsyrulnikov             Expires 1 September 2026               [Page 25]
+Tsyrulnikov             Expires 2 September 2026               [Page 26]
 
-Internet-Draft                   AIR v1                    February 2026
+Internet-Draft                   AIR v1                       March 2026
 
 
      -65543 => enclave-measurements, ; enclave_measurements
@@ -1453,9 +1509,9 @@ Appendix B.  Golden Vector Summary
 
 
 
-Tsyrulnikov             Expires 1 September 2026               [Page 26]
+Tsyrulnikov             Expires 2 September 2026               [Page 27]
 
-Internet-Draft                   AIR v1                    February 2026
+Internet-Draft                   AIR v1                       March 2026
 
 
    *  v1-nitro-no-nonce.json: Nitro measurements, no eat_nonce
@@ -1509,4 +1565,4 @@ Author's Address
 
 
 
-Tsyrulnikov             Expires 1 September 2026               [Page 27]
+Tsyrulnikov             Expires 2 September 2026               [Page 28]

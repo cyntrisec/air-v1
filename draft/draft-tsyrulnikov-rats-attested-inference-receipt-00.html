@@ -1233,11 +1233,11 @@ li > p:last-of-type:only-child {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">AIR v1</td>
-<td class="right">February 2026</td>
+<td class="right">March 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Tsyrulnikov</td>
-<td class="center">Expires 1 September 2026</td>
+<td class="center">Expires 2 September 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1250,12 +1250,12 @@ li > p:last-of-type:only-child {
 <dd class="internet-draft">draft-tsyrulnikov-rats-attested-inference-receipt-00</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-02-28" class="published">28 February 2026</time>
+<time datetime="2026-03-01" class="published">1 March 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-09-01">1 September 2026</time></dd>
+<dd class="expires"><time datetime="2026-09-02">2 September 2026</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1300,7 +1300,7 @@ multi-inference receipts are out of scope for this version.<a href="#section-abs
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 1 September 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 2 September 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1596,6 +1596,11 @@ COSE/CWT libraries and the workload's Ed25519 public key.<a href="#section-1-2" 
 model inside one attested workload produces one receipt. Pipeline
 chaining, multi-stage proofs, and integration with transparency logs
 (such as SCITT <span>[<a href="#SCITT" class="cite xref">SCITT</a>]</span>) are deferred to future versions.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-4">AIR v1 defines the per-inference receipt as the base primitive.
+Future AIR profiles may define aggregation mechanisms for
+high-throughput deployments (for example, Merkle-root commitments over
+multiple inference events) while preserving the same verification
+semantics. Such aggregation mechanisms are out of scope for AIR v1.<a href="#section-1-4" class="pilcrow">¶</a></p>
 <div id="goals">
 <section id="section-1.1">
         <h3 id="name-goals">
@@ -1944,7 +1949,9 @@ values.<a href="#section-5.1.3-1" class="pilcrow">¶</a></p>
 <a href="#section-5.1.4" class="section-number selfRef">5.1.4. </a><a href="#name-eat_profile-key-265" class="section-name selfRef">eat_profile -- key 265</a>
           </h4>
 <p id="section-5.1.4-1">The fixed string value <code>"https://spec.cyntrisec.com/air/v1"</code>.
-Verifiers <span class="bcp14">MUST</span> reject receipts with unknown eat_profile values.<a href="#section-5.1.4-1" class="pilcrow">¶</a></p>
+Verifiers <span class="bcp14">MUST</span> reject receipts with unknown eat_profile values.
+The value is an identifier, not a dereference requirement. Verifiers
+<span class="bcp14">MUST NOT</span> require network retrieval of this URI during validation.<a href="#section-5.1.4-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="eatnonce-key-10">
@@ -2274,7 +2281,8 @@ Implementations <span class="bcp14">MUST NOT</span> invent unregistered scheme v
 <li id="section-6-2.1">
           <p id="section-6-2.1.1"><strong>Profile identifier</strong>: URI
 <code>"https://spec.cyntrisec.com/air/v1"</code> (carried in eat_profile,
-key 265).<a href="#section-6-2.1.1" class="pilcrow">¶</a></p>
+key 265). This URI is used as an opaque identifier and does not
+imply that validation depends on a hosted verifier service.<a href="#section-6-2.1.1" class="pilcrow">¶</a></p>
 </li>
         <li id="section-6-2.2">
           <p id="section-6-2.2.1"><strong>Encoding</strong>: CBOR only (<span>[<a href="#RFC8949" class="cite xref">RFC8949</a>]</span>). JSON serialization is not
@@ -2829,7 +2837,7 @@ with structured error codes.<a href="#section-12.1-1.6.1" class="pilcrow">¶</a>
           <dd class="break"></dd>
 <dt id="section-12.1-1.7">Maturity:</dt>
           <dd style="margin-left: 1.5em" id="section-12.1-1.8">
-            <p id="section-12.1-1.8.1">Production. Emitted in E2E paths on three platforms.<a href="#section-12.1-1.8.1" class="pilcrow">¶</a></p>
+            <p id="section-12.1-1.8.1">Deployment-validated. Emitted in E2E paths on three platforms.<a href="#section-12.1-1.8.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-12.1-1.9">Coverage:</dt>
@@ -2837,9 +2845,95 @@ with structured error codes.<a href="#section-12.1-1.6.1" class="pilcrow">¶</a>
             <p id="section-12.1-1.10.1">575 tests passing (including 16 AIR v1 conformance vector tests).<a href="#section-12.1-1.10.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-12.1-1.11">Contact:</dt>
+<dt id="section-12.1-1.11">Performance snapshot (non-normative):</dt>
           <dd style="margin-left: 1.5em" id="section-12.1-1.12">
-            <p id="section-12.1-1.12.1">borys@cyntrisec.com<a href="#section-12.1-1.12.1" class="pilcrow">¶</a></p>
+            <p id="section-12.1-1.12.1">2026-03-01 AWS build-host microbenchmark aggregate
+(<code>air_v1_aws_build_bench_5runs_2026-03-01</code>) measured crypto and verifier
+costs on an AWS <code>c6i.xlarge</code> Linux host after compiling
+<code>ephemeralml-verify</code> from source (valid AIR vector size 599 bytes).
+Values below are 5-run median and p95:<a href="#section-12.1-1.12.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<table class="center" id="table-5">
+          <caption><a href="#table-5" class="selfRef">Table 5</a></caption>
+<thead>
+            <tr>
+              <th class="text-left" rowspan="1" colspan="1">Metric</th>
+              <th class="text-right" rowspan="1" colspan="1">Median</th>
+              <th class="text-right" rowspan="1" colspan="1">p95</th>
+              <th class="text-left" rowspan="1" colspan="1">Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">SHA-256 (1 KB)</td>
+              <td class="text-right" rowspan="1" colspan="1">0.931 us</td>
+              <td class="text-right" rowspan="1" colspan="1">0.931 us</td>
+              <td class="text-left" rowspan="1" colspan="1">OpenSSL 3.2.2 speed conversion</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">SHA-256 (4 KB)</td>
+              <td class="text-right" rowspan="1" colspan="1">3.227 us</td>
+              <td class="text-right" rowspan="1" colspan="1">3.227 us</td>
+              <td class="text-left" rowspan="1" colspan="1">OpenSSL 3.2.2 speed conversion</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">Ed25519 sign</td>
+              <td class="text-right" rowspan="1" colspan="1">31.763 us</td>
+              <td class="text-right" rowspan="1" colspan="1">31.887 us</td>
+              <td class="text-left" rowspan="1" colspan="1">OpenSSL 3.2.2 speed</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">Ed25519 verify</td>
+              <td class="text-right" rowspan="1" colspan="1">102.512 us</td>
+              <td class="text-right" rowspan="1" colspan="1">103.338 us</td>
+              <td class="text-left" rowspan="1" colspan="1">OpenSSL 3.2.2 speed</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">AIR verify (Rust CLI, process-per-call)</td>
+              <td class="text-right" rowspan="1" colspan="1">1,533.100 us</td>
+              <td class="text-right" rowspan="1" colspan="1">1,558.608 us</td>
+              <td class="text-left" rowspan="1" colspan="1">Includes process spawn overhead</td>
+            </tr>
+          </tbody>
+        </table>
+<p id="section-12.1-3">Estimated receipt emission crypto path for a 1 KB request + 4 KB response
+plus a 1 KB attestation hash and Ed25519 signing is
+36.852 us median (36.958 us p95) per inference on this host.<a href="#section-12.1-3" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-12.1-4">
+          <dt id="section-12.1-4.1">Separate retest run (non-normative):</dt>
+          <dd style="margin-left: 1.5em" id="section-12.1-4.2">
+            <p id="section-12.1-4.2.1">A second 5-run retest on the same AWS instance class
+(<code>air_v1_aws_retest_bench_5runs_2026-03-01</code>) reproduced SHA-256 and
+Ed25519 primitive timings within approximately 1%, and reproduced the
+receipt emission crypto estimate at 37.035 us median (+0.5% versus the
+baseline snapshot). The Rust CLI process-per-call verify metric
+increased by +14.7% in the retest; this metric includes process
+fork/exec/linker overhead and is environment-sensitive.
+For this reason, AIR v1 performance interpretation should prioritize
+the per-inference crypto path estimate rather than CLI
+process-per-call latency.<a href="#section-12.1-4.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-12.1-4.3">Environment-sensitivity check (non-normative):</dt>
+          <dd style="margin-left: 1.5em" id="section-12.1-4.4">
+            <p id="section-12.1-4.4.1">A separate run on GCP n2-standard-4 (Intel Xeon @ 2.80 GHz, OpenSSL 3.0.13,
+Ubuntu 24.04) measured the emit crypto path at 62.178 us median. The
+absolute values differ from AWS due to OpenSSL version (3.0 vs 3.2
+assembly paths) and CPU generation, not protocol logic. This confirms
+the AIR crypto path remains in tens of microseconds across tested
+environments.<a href="#section-12.1-4.4.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-12.1-5">These measurements are
+environment-specific and informative only; AIR v1 does not define
+performance requirements.<a href="#section-12.1-5" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-12.1-6">
+          <dt id="section-12.1-6.1">Contact:</dt>
+          <dd style="margin-left: 1.5em" id="section-12.1-6.2">
+            <p id="section-12.1-6.2.1">borys@cyntrisec.com<a href="#section-12.1-6.2.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
@@ -2853,7 +2947,7 @@ with structured error codes.<a href="#section-12.1-1.6.1" class="pilcrow">¶</a>
 <span class="break"></span><dl class="dlParallel" id="section-12.2-1">
           <dt id="section-12.2-1.1">Organization:</dt>
           <dd style="margin-left: 1.5em" id="section-12.2-1.2">
-            <p id="section-12.2-1.2.1">Cyntrisec (same team, independent implementation)<a href="#section-12.2-1.2.1" class="pilcrow">¶</a></p>
+            <p id="section-12.2-1.2.1">Cyntrisec (same team, separate Python implementation)<a href="#section-12.2-1.2.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-12.2-1.3">Implementation:</dt>
@@ -2883,8 +2977,8 @@ presence.<a href="#section-12.2-1.6.1" class="pilcrow">¶</a></p>
         </h3>
 <p id="section-12.3-1">The reference implementation has been validated end-to-end on three
 confidential computing platforms:<a href="#section-12.3-1" class="pilcrow">¶</a></p>
-<table class="center" id="table-5">
-          <caption><a href="#table-5" class="selfRef">Table 5</a></caption>
+<table class="center" id="table-6">
+          <caption><a href="#table-6" class="selfRef">Table 6</a></caption>
 <thead>
             <tr>
               <th class="text-left" rowspan="1" colspan="1">Platform</th>
@@ -2986,8 +3080,8 @@ through all four layers.<a href="#section-13.1-8" class="pilcrow">¶</a></p>
         </h3>
 <p id="section-13.2-1">The specification includes 8 invalid golden vectors covering failure
 modes across all verification layers:<a href="#section-13.2-1" class="pilcrow">¶</a></p>
-<table class="center" id="table-6">
-          <caption><a href="#table-6" class="selfRef">Table 6</a></caption>
+<table class="center" id="table-7">
+          <caption><a href="#table-7" class="selfRef">Table 7</a></caption>
 <thead>
             <tr>
               <th class="text-left" rowspan="1" colspan="1">Vector</th>

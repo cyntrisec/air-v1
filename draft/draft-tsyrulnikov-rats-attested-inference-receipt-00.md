@@ -916,7 +916,7 @@ Contact:
 ## Python Interop Verifier
 
 Organization:
-: Cyntrisec (same team, independent implementation)
+: Cyntrisec (same team, separate Python implementation)
 
 Implementation:
 : `scripts/interop_test.py`
