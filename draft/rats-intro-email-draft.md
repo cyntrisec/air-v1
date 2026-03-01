@@ -4,28 +4,25 @@
 
 ## Subject (draft)
 
-`[RATS] Feedback request: AIR (Attested Inference Receipt) COSE/CWT profile for confidential AI inference`
+`[RATS] Technical review requested: AIR (Attested Inference Receipt) COSE/CWT profile for confidential AI inference`
 
 ## Body (draft)
 
 Hello RATS WG,
 
-I am working on an open receipt format for confidential AI inference called **AIR** (Attested
-Inference Receipt), and I would appreciate feedback on whether the problem/scope is a good fit for
-RATS.
+I am preparing an individual draft for **AIR** (Attested Inference Receipt), an open profile for
+per-inference evidence in confidential AI inference. AIR profiles existing IETF standards
+(COSE/CWT/EAT) to bind model identity, input/output hashes, execution metadata, and signature into
+a single verifiable artifact.
 
-Problem we are trying to solve:
+Problem statement:
 
 - Existing attestation mechanisms prove platform identity / evidence validity.
 - In practice, there is no widely used interoperable receipt format for a **single AI inference**
-  that binds:
-  - model identity (`model_hash`)
-  - input/output hashes
-  - timestamp / nonce
-  - attestation-linked execution metadata
-  - signature
+  that binds model identity (`model_hash`), input/output hashes, timestamp/nonce, attestation-linked
+  metadata, and signature.
 
-Current approach:
+Draft scope:
 
 - AIR v1 is a **COSE_Sign1** envelope (RFC 9052)
 - payload is **CWT/EAT-style claims** with an AIR-specific profile (`eat_profile`)
@@ -39,11 +36,7 @@ What is already available publicly:
 - reference Rust verifier (4-layer verification model)
 - implementation status / limitations documentation
 
-Planned next step before any submission:
-
-- complete at least one external interoperability run using the public vectors and interop kit
-
-Questions for the WG:
+Request for WG technical review:
 
 1. Does a COSE/CWT/EAT-based "inference receipt" profile fit the RATS problem space?
 2. Would this be better framed as an individual RATS profile draft, or outside RATS initially?
@@ -57,7 +50,7 @@ Draft materials (placeholders to fill before sending):
 - Reference verifier: `<LINK>`
 - Implementation status / limitations: `<LINK>`
 
-I am happy to post a short architecture summary or draft text if this appears in-scope.
+I can provide a short architecture summary and sample vectors in follow-up if helpful.
 
 Thanks,
 
@@ -70,4 +63,3 @@ Thanks,
 - Include implementation/interoperability status (do not overstate)
 - Keep the message technical and narrow (single-inference receipt profile only)
 - Avoid claims about pipeline chaining / deletion proof / SCITT integration in v1
-

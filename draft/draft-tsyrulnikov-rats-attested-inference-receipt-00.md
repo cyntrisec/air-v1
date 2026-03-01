@@ -102,6 +102,12 @@ model inside one attested workload produces one receipt. Pipeline
 chaining, multi-stage proofs, and integration with transparency logs
 (such as SCITT {{SCITT}}) are deferred to future versions.
 
+AIR v1 defines the per-inference receipt as the base primitive.
+Future AIR profiles may define aggregation mechanisms for
+high-throughput deployments (for example, Merkle-root commitments over
+multiple inference events) while preserving the same verification
+semantics. Such aggregation mechanisms are out of scope for AIR v1.
+
 ## Goals
 
 The goals of AIR v1 are:
@@ -338,6 +344,8 @@ values.
 
 The fixed string value `"https://spec.cyntrisec.com/air/v1"`.
 Verifiers MUST reject receipts with unknown eat_profile values.
+The value is an identifier, not a dereference requirement. Verifiers
+MUST NOT require network retrieval of this URI during validation.
 
 ### eat_nonce -- key 10
 
@@ -485,7 +493,8 @@ This section consolidates the mandatory profile positions per
 
 1.  **Profile identifier**: URI
     `"https://spec.cyntrisec.com/air/v1"` (carried in eat_profile,
-    key 265).
+    key 265). This URI is used as an opaque identifier and does not
+    imply that validation depends on a hosted verifier service.
 
 2.  **Encoding**: CBOR only ({{RFC8949}}). JSON serialization is not
     defined.
