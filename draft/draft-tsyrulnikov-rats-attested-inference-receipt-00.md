@@ -885,6 +885,27 @@ Performance snapshot (non-normative):
 Estimated receipt emission crypto path for a 1 KB request + 4 KB response
 plus a 1 KB attestation hash and Ed25519 signing is
 36.852 us median (36.958 us p95) per inference on this host.
+
+Independent retest (non-normative):
+: A second independent 5-run retest on the same AWS instance class
+  (`air_v1_aws_retest_bench_5runs_2026-03-01`) reproduced SHA-256 and
+  Ed25519 primitive timings within approximately 1%, and reproduced the
+  receipt emission crypto estimate at 37.035 us median (+0.5% versus the
+  baseline snapshot). The Rust CLI process-per-call verify metric
+  increased by +14.7% in the retest; this metric includes process
+  fork/exec/linker overhead and is environment-sensitive.
+  For this reason, AIR v1 performance interpretation should prioritize
+  the per-inference crypto path estimate rather than CLI
+  process-per-call latency.
+
+Environment-sensitivity check (non-normative):
+: A separate run on GCP n2-standard-4 (Intel Xeon @ 2.80 GHz, OpenSSL 3.0.13,
+  Ubuntu 24.04) measured the emit crypto path at 62.178 us median. The
+  absolute values differ from AWS due to OpenSSL version (3.0 vs 3.2
+  assembly paths) and CPU generation, not protocol logic. This confirms
+  the AIR crypto path remains in tens of microseconds across tested
+  environments.
+
 These measurements are
 environment-specific and informative only; AIR v1 does not define
 performance requirements.
