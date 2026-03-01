@@ -865,7 +865,9 @@ Maturity:
 : Deployment-validated. Emitted in E2E paths on three platforms.
 
 Coverage:
-: 575 tests passing (including 16 AIR v1 conformance vector tests).
+: Automated test coverage includes AIR v1 conformance vectors and
+  negative cases. Current CI snapshot (2026-03-01): 575 passing tests,
+  including 16 AIR v1 conformance vector tests.
 
 Performance snapshot (non-normative):
 : 2026-03-01 AWS build-host microbenchmark aggregate
