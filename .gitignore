@@ -12,3 +12,19 @@ __pycache__/
 *.bak
 .refcache/
 draft/.refcache/
+
+# Legal/private filing artifacts (local only)
+docs/submission/patent/
+docs/submission/patent-public-disclosure-audit-*.md
+docs/submission/patent-public-disclosure-audit-*.json
+
+# Patent receipts and personal inventor data (defense in depth)
+docs/submission/**/receipts/
+docs/submission/**/inventor-info-checklist.md
+
+# Regulatory/public-comment drafts (local working copies)
+docs/submission/NIST_SUBMIT_CHECKLIST.md
+docs/submission/nist-*.md
+docs/submission/nist-*.txt
+docs/submission/nccoe-*.md
+docs/submission/nccoe-*.txt
