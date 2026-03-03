@@ -1,0 +1,99 @@
+{
+  "timestamp_utc": "2026-03-01T15:19:48Z",
+  "instance_type": "c6i.xlarge",
+  "binary": "ephemeralml-verify (release build)",
+  "receipt_size_bytes": 599,
+  "run_count": 5,
+  "verify_iterations_per_run": 1000,
+  "timing_tool": "hyperfine 1.19.0 (--shell=none)",
+  "rust_version": "1.93.1",
+  "kernel": "6.1.161-183.298.amzn2023.x86_64",
+  "runs": [
+    {
+      "run": 1,
+      "verify_mean_us": 1759.166495,
+      "verify_ops_per_sec": 568.451027,
+      "sha256_1024b_us": 0.919485,
+      "sha256_4096b_us": 3.215214,
+      "ed25519_sign_us": 31.980863,
+      "ed25519_verify_us": 101.45898,
+      "emit_estimate_us": 37.035046
+    },
+    {
+      "run": 2,
+      "verify_mean_us": 1760.243065,
+      "verify_ops_per_sec": 568.10336,
+      "sha256_1024b_us": 0.919281,
+      "sha256_4096b_us": 3.214411,
+      "ed25519_sign_us": 31.930519,
+      "ed25519_verify_us": 102.148176,
+      "emit_estimate_us": 36.983491
+    },
+    {
+      "run": 3,
+      "verify_mean_us": 1758.077227,
+      "verify_ops_per_sec": 568.803227,
+      "sha256_1024b_us": 0.919788,
+      "sha256_4096b_us": 3.216017,
+      "ed25519_sign_us": 32.006145,
+      "ed25519_verify_us": 101.102012,
+      "emit_estimate_us": 37.061738
+    },
+    {
+      "run": 4,
+      "verify_mean_us": 1757.510354,
+      "verify_ops_per_sec": 568.986691,
+      "sha256_1024b_us": 0.91956,
+      "sha256_4096b_us": 3.21491,
+      "ed25519_sign_us": 31.980863,
+      "ed25519_verify_us": 101.722156,
+      "emit_estimate_us": 37.034892
+    },
+    {
+      "run": 5,
+      "verify_mean_us": 1753.463925,
+      "verify_ops_per_sec": 570.299728,
+      "sha256_1024b_us": 0.919614,
+      "sha256_4096b_us": 3.215586,
+      "ed25519_sign_us": 32.043271,
+      "ed25519_verify_us": 102.98343,
+      "emit_estimate_us": 37.098086
+    }
+  ],
+  "aggregate": {
+    "verify_mean_us": {
+      "median": 1758.077227,
+      "p95": 1760.243065,
+      "min": 1753.463925,
+      "max": 1760.243065
+    },
+    "verify_ops_per_sec": {
+      "median": 568.803227,
+      "p95_low": 568.10336,
+      "min": 568.10336,
+      "max": 570.299728
+    },
+    "emit_estimate_us": {
+      "median": 37.035046,
+      "p95": 37.098086,
+      "min": 36.983491,
+      "max": 37.098086
+    },
+    "sha256_1024b_us": {
+      "median": 0.91956,
+      "p95": 0.919788
+    },
+    "sha256_4096b_us": {
+      "median": 3.215214,
+      "p95": 3.216017
+    },
+    "ed25519_sign_us": {
+      "median": 31.980863,
+      "p95": 32.043271
+    },
+    "ed25519_verify_us": {
+      "median": 101.722156,
+      "p95": 102.98343
+    }
+  }
+}

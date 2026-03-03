@@ -1,0 +1,103 @@
+{
+  "timestamp_utc": "2026-03-01T15:45:49Z",
+  "cloud": "GCP",
+  "instance_type": "n2-standard-4",
+  "cpu": "Intel Xeon @ 2.80GHz",
+  "binary": "ephemeralml-verify (release build)",
+  "receipt_size_bytes": 599,
+  "run_count": 5,
+  "verify_iterations_per_run": 1000,
+  "timing_tool": "hyperfine 1.19.0 (--shell=none)",
+  "rust_version": "1.93.1",
+  "openssl_version": "3.0.13",
+  "kernel": "6.17.0-1008-gcp",
+  "os": "Ubuntu 24.04 LTS",
+  "runs": [
+    {
+      "run": 1,
+      "verify_mean_us": 2320.010159,
+      "verify_ops_per_sec": 431.032595,
+      "sha256_1024b_us": 2.675485,
+      "sha256_4096b_us": 9.708047,
+      "ed25519_sign_us": 47.155576,
+      "ed25519_verify_us": 127.885415,
+      "emit_estimate_us": 62.214592
+    },
+    {
+      "run": 2,
+      "verify_mean_us": 2290.307386,
+      "verify_ops_per_sec": 436.622615,
+      "sha256_1024b_us": 2.668346,
+      "sha256_4096b_us": 9.706476,
+      "ed25519_sign_us": 47.134683,
+      "ed25519_verify_us": 126.927715,
+      "emit_estimate_us": 62.177851
+    },
+    {
+      "run": 3,
+      "verify_mean_us": 2297.607242,
+      "verify_ops_per_sec": 435.235397,
+      "sha256_1024b_us": 2.669576,
+      "sha256_4096b_us": 9.710969,
+      "ed25519_sign_us": 47.108038,
+      "ed25519_verify_us": 125.835231,
+      "emit_estimate_us": 62.158159
+    },
+    {
+      "run": 4,
+      "verify_mean_us": 2290.973558,
+      "verify_ops_per_sec": 436.495653,
+      "sha256_1024b_us": 2.667746,
+      "sha256_4096b_us": 9.710749,
+      "ed25519_sign_us": 47.110479,
+      "ed25519_verify_us": 126.686514,
+      "emit_estimate_us": 62.156719
+    },
+    {
+      "run": 5,
+      "verify_mean_us": 2283.589477,
+      "verify_ops_per_sec": 437.90708,
+      "sha256_1024b_us": 2.681042,
+      "sha256_4096b_us": 9.735108,
+      "ed25519_sign_us": 47.117582,
+      "ed25519_verify_us": 126.872962,
+      "emit_estimate_us": 62.214773
+    }
+  ],
+  "aggregate": {
+    "verify_mean_us": {
+      "median": 2290.973558,
+      "p95": 2320.010159,
+      "min": 2283.589477,
+      "max": 2320.010159
+    },
+    "verify_ops_per_sec": {
+      "median": 436.495653,
+      "p95_low": 431.032595,
+      "min": 431.032595,
+      "max": 437.90708
+    },
+    "emit_estimate_us": {
+      "median": 62.177851,
+      "p95": 62.214773,
+      "min": 62.156719,
+      "max": 62.214773
+    },
+    "sha256_1024b_us": {
+      "median": 2.669576,
+      "p95": 2.681042
+    },
+    "sha256_4096b_us": {
+      "median": 9.710749,
+      "p95": 9.735108
+    },
+    "ed25519_sign_us": {
+      "median": 47.117582,
+      "p95": 47.155576
+    },
+    "ed25519_verify_us": {
+      "median": 126.872962,
+      "p95": 127.885415
+    }
+  }
+}

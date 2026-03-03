@@ -28,3 +28,6 @@ docs/submission/nist-*.md
 docs/submission/nist-*.txt
 docs/submission/nccoe-*.md
 docs/submission/nccoe-*.txt
+
+# Personal submission/process workspace (keep local, not GitHub)
+docs/submission/
