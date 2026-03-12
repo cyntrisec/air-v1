@@ -224,7 +224,7 @@ Still needed for M4 exit:
 
 ## 8. Test Coverage
 
-575 tests passing across the workspace (`cargo test -q`):
+At the publication baseline, the workspace had **500+ tests passing** (`cargo test -q`):
 
 - 83 verification tests (AIR v1 4-layer verifier + golden vectors + platform attestation)
 - 59 receipt tests (legacy + AIR v1 round-trip, signing, compliance, property-based)
