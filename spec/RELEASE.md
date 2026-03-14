@@ -1,11 +1,18 @@
 # AIR v1.0 — Release Note
 
-**Date:** 2026-02-25
-**Tag:** `air-v1.0-frozen`
+**Original freeze date:** 2026-02-25
+**Frozen baseline tag:** `spec-frozen-baseline` (commit `6ab08ea`)
+**Current tag:** `v1.0.1` (post-freeze normative tightening + CI, 2026-03-15)
 
 ## Summary
 
-Attested Inference Receipt (AIR) v1.0 is the first frozen release of the receipt specification for confidential AI inference. It defines a COSE_Sign1 envelope carrying CWT claims with EAT profile identification, signed with Ed25519.
+Attested Inference Receipt (AIR) v1.0 is the first stable release of the receipt specification for confidential AI inference. It defines a COSE_Sign1 envelope carrying CWT claims with EAT profile identification, signed with Ed25519.
+
+**v1.0.1 changes** (wire-format compatible, verifier behavior tightened):
+- Removed optional `kid` from unprotected header (now MUST be empty `{}`)
+- Added `eat_nonce` size constraint `.size (8..64)` per RFC 9711 s4.1
+- Added `PROTECTED_ONLY` interop verification check
+- Added CI: interop vector tests, normative drift detection, CDDL validation
 
 ## What's in this release
 
