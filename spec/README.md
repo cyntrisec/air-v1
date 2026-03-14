@@ -54,9 +54,10 @@ docs/                Publication docs, submission checklists
 
 ## IETF Internet-Draft (Non-Normative)
 
-The IETF Internet-Draft (`draft-tsyrulnikov-rats-attested-inference-receipt-00`) is maintained
-under `draft/`. It is a non-normative presentation of the AIR v1 specification for IETF review
-and is not part of the normative specification freeze.
+The current local IETF Internet-Draft revision (`draft-tsyrulnikov-rats-attested-inference-receipt-01`)
+is maintained under `draft/`, alongside the older `-00` snapshot. It is a non-normative
+presentation of the AIR v1 specification for IETF review and is not part of the normative
+specification freeze.
 
 ## License
 

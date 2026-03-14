@@ -151,7 +151,7 @@ See `docs/security/M2_TRUST_MATRIX_STATUS.md` for the full T1/T2/T3/T4 matrix an
 
 ## 5. E2E Emission Status
 
-**AIR v1 receipts are now emitted in all production E2E inference paths** (commit `a421e98`, 2026-02-25).
+**AIR v1 receipts are emitted in GCP production E2E inference paths** (commit `a421e98`, 2026-02-25). The AWS Nitro E2E path still emits legacy JSON receipts; AIR v1 emission on Nitro is backlog.
 
 ### Where AIR v1 is emitted
 

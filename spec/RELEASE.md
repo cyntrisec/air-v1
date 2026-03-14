@@ -43,7 +43,7 @@ Attested Inference Receipt (AIR) v1.0 is the first frozen release of the receipt
 3. **Ed25519 verify_strict** — single MTI algorithm, no negotiation
 4. **Negative integer keys** for private claims (-65537 to -65549) — avoids IANA collision
 5. **Issue #80 resolved**: `model_hash_scheme` (key -65549) is optional, RECOMMENDED. Three defined values: `sha256-single`, `sha256-concat`, `sha256-manifest`.
-6. **Tier 1+2 parse hardening** (2026-02-28): Pre-parse size limit (64 KB), unprotected header rejection, duplicate CBOR key detection, iat=0 rejection, text claim length bounds, pcr8/TDX cross-check, security_mode allowlist, `current_timestamp()` error propagation. 12 new tests added. Wire format unchanged; golden vectors byte-stable.
+6. **Tier 1+2 parse hardening** (2026-02-28): Pre-parse size limit (64 KB), unprotected header rejection, duplicate CBOR key detection, iat=0 rejection, text claim length bounds, pcr8/TDX cross-check, and `current_timestamp()` error propagation. 12 new tests added. Wire format unchanged; golden vectors byte-stable.
 
 ## Breaking changes from v0.1
 
