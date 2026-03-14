@@ -1,4 +1,4 @@
-# AIR v1 (`-00`) — RATS Internet-Draft Outline (Draft)
+# AIR v1 (`-01`) — RATS Internet-Draft Outline (Draft)
 
 **Working title (proposed):**  
 Attested Inference Receipt (AIR): A COSE/CWT Profile for Confidential AI Inference
@@ -10,7 +10,7 @@ This is a non-normative authoring outline for M5 preparation.
 
 ## 1. Draft Metadata (placeholder)
 
-- `draft-tsyrulnikov-rats-attested-inference-receipt-00`
+- `draft-tsyrulnikov-rats-attested-inference-receipt-01`
 - Authors: Borys Tsyrulnikov (Cyntrisec)
 - WG adoption status: Individual draft (pre-adoption)
 
@@ -178,4 +178,3 @@ Avoid embedding large blobs in the draft if not needed.
 - [ ] Security and privacy considerations reviewed
 - [ ] `idnits` run and issues triaged
 - [ ] Links to spec, vectors, and reference verifier included
-
