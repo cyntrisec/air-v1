@@ -61,9 +61,8 @@ AIR v1 uses these COSE_Sign1 header parameters:
 
 ### Unprotected Header
 
-| Parameter | CBOR Label | Value | Required |
-|-----------|-----------|-------|----------|
-| kid | 4 | Signing key identifier (bstr) | Optional |
+The unprotected header MUST be empty for AIR v1 receipts. AIR v1 does
+not define `kid` or any other unprotected header parameter.
 
 ## 5. CWT Claim Assignments
 
@@ -75,7 +74,7 @@ AIR v1 uses these COSE_Sign1 header parameters:
 | iat (Issued At) | 6 | uint | Yes | RFC 8392 — execution_timestamp |
 | cti (CWT ID) | 7 | bstr | Yes | RFC 8392 — receipt_id (UUID v4, 16 bytes) |
 | eat_profile | 265 | tstr | Yes | RFC 9711 — `"https://spec.cyntrisec.com/air/v1"` |
-| eat_nonce | 10 | bstr | Optional | RFC 9711 — challenge nonce for replay resistance |
+| eat_nonce | 10 | bstr .size (8..64) | Optional | RFC 9711 — challenge nonce for replay resistance |
 
 ### AIR Private Claims (negative integer keys, range TBD)
 
@@ -86,8 +85,8 @@ Private claims use negative integer keys to avoid collision with IANA-registered
 | model_id | -65537 | tstr | Yes | Model identifier (operator-assigned, opaque) |
 | model_version | -65538 | tstr | Yes | Model version string (operator-assigned, opaque) |
 | model_hash | -65539 | bstr(32) | Yes | SHA-256 of model weights — cryptographic model identity |
-| request_hash | -65540 | bstr(32) | Yes | SHA-256 of inference request |
-| response_hash | -65541 | bstr(32) | Yes | SHA-256 of inference response |
+| request_hash | -65540 | bstr(32) | Yes | SHA-256 of raw wire bytes of the inference request |
+| response_hash | -65541 | bstr(32) | Yes | SHA-256 of raw wire bytes of the inference response |
 | attestation_doc_hash | -65542 | bstr(32) | Yes | SHA-256 of attestation document |
 | enclave_measurements | -65543 | map | Yes | Platform measurements (see scope-v1.md §1.2) |
 | policy_version | -65544 | tstr | Yes | Policy version identifier |

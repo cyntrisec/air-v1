@@ -31,11 +31,9 @@ The signature covers `Sig_structure1 = ["Signature1", protected, external_aad, p
 
 ### 1.2 Unprotected Header
 
-| Label | Name | Value | Notes |
-|-------|------|-------|-------|
-| 4 | kid | bstr | Optional. Key identifier for the signing key. |
+The unprotected header MUST be empty for AIR v1 receipts. Unprotected parameters are not covered by the COSE signature and can be tampered in transit. Verifiers MUST reject receipts with non-empty unprotected headers.
 
-> **Implementation note (v1.0):** The reference implementation rejects non-empty unprotected headers. This is stricter than the CDDL, which permits optional `kid`. Rationale: unprotected headers are not covered by the COSE signature and can be tampered in transit. If `kid` is needed in a future v1.x, it should move to the protected header.
+AIR v1 does not use `kid` or any other unprotected header parameter. If key identification is needed in a future v1.x revision, it should be carried in the protected header.
 
 ## 2. Standard CWT/EAT Claims
 
@@ -87,9 +85,9 @@ These claims use IANA-registered CWT integer keys.
 | Property | Value |
 |----------|-------|
 | CWT key | 10 |
-| CBOR type | bstr |
+| CBOR type | bstr .size (8..64) |
 | Required | No (optional) |
-| Semantics | Challenge nonce provided by the client to bind the receipt to a specific request session. |
+| Semantics | Challenge nonce provided by the client to bind the receipt to a specific request session. Size constraint per RFC 9711 §4.1: 8-64 bytes. |
 | Verification | If the verifier supplied a nonce, it MUST check that eat_nonce matches. Primary replay resistance mechanism when verifier-side cti dedup is not feasible. |
 
 ## 3. AIR Private Claims
@@ -130,8 +128,8 @@ These claims use negative integer keys to avoid collision with IANA CWT claim re
 |----------|-------|
 | CBOR type | bstr .size 32 |
 | Required | Yes |
-| Semantics | SHA-256 of the inference request payload. Binds the receipt to a specific input. |
-| Verification | Client holding the original request can recompute and compare. |
+| Semantics | SHA-256 of the raw wire bytes of the inference request as received by the workload. Binds the receipt to a specific input. |
+| Verification | Client holding the original request bytes can recompute and compare. AIR v1 does not define a canonicalization scheme for request payloads. |
 
 ### response_hash — key -65541
 
@@ -139,8 +137,8 @@ These claims use negative integer keys to avoid collision with IANA CWT claim re
 |----------|-------|
 | CBOR type | bstr .size 32 |
 | Required | Yes |
-| Semantics | SHA-256 of the inference response payload. Binds the receipt to a specific output. |
-| Verification | Client holding the original response can recompute and compare. |
+| Semantics | SHA-256 of the raw wire bytes of the inference response as emitted by the workload. Binds the receipt to a specific output. |
+| Verification | Client holding the original response bytes can recompute and compare. |
 
 ### attestation_doc_hash — key -65542
 
@@ -278,13 +276,13 @@ This section consolidates the mandatory profile positions per RFC 9711 §6.3.
 | **HTTP media type** | `application/eat+cwt` (RFC 9782). Receivers SHOULD accept both `application/cwt` and `application/eat+cwt`. |
 | **Signing algorithm** | Ed25519 only (COSE alg = -8). `verify_strict` required (canonical S per RFC 8032 §5.1.7). No algorithm negotiation in v1. |
 | **Detached bundles** | Not supported in v1. The attestation document is referenced by hash (`attestation_doc_hash`), not embedded. |
-| **Key identification** | Out of band. The verifier obtains the Ed25519 public key through a platform-specific channel (e.g., attestation document, key registry). Optional `kid` in unprotected header is reserved but currently rejected by the reference implementation (see §1.2 note). |
+| **Key identification** | Out of band. The verifier obtains the Ed25519 public key through a platform-specific channel (e.g., attestation document, key registry). AIR v1 does not use `kid` or any other unprotected header parameter. |
 | **Mandatory claims** | 16 required: iss, iat, cti, eat_profile, model_id, model_version, model_hash, request_hash, response_hash, attestation_doc_hash, enclave_measurements, policy_version, sequence_number, execution_time_ms, memory_peak_mb, security_mode. |
 | **Optional claims** | 2 optional: eat_nonce (replay resistance), model_hash_scheme (hash computation method). |
 | **Freshness** | `iat` carries execution timestamp (Unix seconds). Verifier applies `max_age` + `clock_skew` policy. `eat_nonce` provides optional challenge-response replay resistance (RFC 9711 §4.1, 8–64 bytes). |
 | **Deterministic encoding** | Required. Map keys sorted per RFC 8949 §4.2.1 (shorter encoded form first, then bytewise lexicographic). |
 | **Closed map** | The claims map is closed: unknown integer keys MUST be rejected. Duplicate keys MUST be rejected. |
-| **Unprotected header** | MUST be empty. AIR v1 requires all header parameters in the protected bucket. The CDDL permits `? 4 => bstr` (kid) for forward compatibility, but the reference implementation rejects non-empty unprotected headers since they are not signed and can be tampered. |
+| **Unprotected header** | MUST be empty. AIR v1 does not use `kid` or any other unprotected header parameter. Verifiers MUST reject receipts with non-empty unprotected headers. |
 | **Private claim keys** | -65537 to -65549 (private use per RFC 8392). No IANA registration required. Keys -65550 to -65599 reserved for v1.x extensions. |
 
 ## 7. v1.x Extension Rules

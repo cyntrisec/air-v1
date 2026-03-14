@@ -113,6 +113,7 @@ A conformant verifier MUST implement these checks:
 - [ ] **PARSE**: Decode CBOR tag 18, extract COSE_Sign1 fields
 - [ ] **ALG**: Protected header `alg` == -8 (EdDSA). Reject all others.
 - [ ] **CONTENT_TYPE**: Protected header content_type == 61
+- [ ] **PROTECTED_ONLY**: Protected header contains only `alg` and `content_type`
 - [ ] **SIG**: Ed25519 verify_strict over Sig_structure1
 - [ ] **PROFILE**: eat_profile == `"https://spec.cyntrisec.com/air/v1"`. Reject unknown.
 - [ ] **CTI**: cti is exactly 16 bytes
@@ -145,6 +146,7 @@ def verify_air_v1(receipt_bytes, public_key_bytes):
     # 2. Check protected header
     assert msg.phdr[1] == -8,   "alg must be EdDSA (-8)"
     assert msg.phdr[3] == 61,   "content_type must be 61"
+    assert set(msg.phdr.keys()) == {1, 3}, "no extra protected header params"
 
     # 3. Verify signature (verify_strict)
     sig_structure = cbor2.dumps([
