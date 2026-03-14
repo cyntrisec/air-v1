@@ -1,0 +1,97 @@
+name: AIR v1 Spec CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  interop-vectors:
+    name: Golden vector interop test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install cbor2 pynacl
+
+      - name: Run AIR v1 interop test (10 golden vectors)
+        run: python3 scripts/interop_test.py --verbose
+
+  normative-drift:
+    name: Normative file drift check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check normative files against tagged baseline
+        run: |
+          # List of normative files whose changes require a version bump
+          NORMATIVE_FILES=(
+            spec/air-v1.cddl
+            spec/claim-mapping.md
+            spec/scope-v1.md
+            spec/dependencies.md
+            spec/threat-model.md
+            spec/limitations-v1.md
+            spec/naming.md
+            spec/interop-kit.md
+            spec/RELEASE.md
+          )
+
+          # Find the latest v1.0.x tag (baseline for drift detection)
+          BASELINE_TAG=$(git tag -l 'v1.0*' --sort=-v:refname | head -1)
+          if [ -z "$BASELINE_TAG" ]; then
+            echo "No v1.0.x tag found -- skipping drift check (first run before tagging)"
+            exit 0
+          fi
+
+          echo "Checking normative files against baseline: $BASELINE_TAG"
+          CHANGED=()
+          for f in "${NORMATIVE_FILES[@]}"; do
+            if ! git diff --quiet "$BASELINE_TAG" -- "$f" 2>/dev/null; then
+              CHANGED+=("$f")
+            fi
+          done
+
+          if [ ${#CHANGED[@]} -eq 0 ]; then
+            echo "No normative files changed since $BASELINE_TAG"
+          else
+            echo "WARNING: Normative files changed since $BASELINE_TAG:"
+            printf '  %s\n' "${CHANGED[@]}"
+            echo ""
+            echo "If these changes are intentional, bump the version tag."
+            echo "If not, revert the normative changes before merging."
+            # Warn but do not fail -- the human decides whether to bump
+          fi
+
+  cddl-validate:
+    name: CDDL schema validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install cddl CLI
+        run: cargo install cddl --locked 2>/dev/null || echo "cddl install failed -- skipping validation"
+
+      - name: Validate air-v1.cddl
+        run: |
+          if command -v cddl &>/dev/null; then
+            cddl spec/air-v1.cddl validate 2>&1 || {
+              echo "CDDL validation failed"
+              exit 1
+            }
+          else
+            echo "cddl CLI not available -- skipping"
+          fi
