@@ -19,7 +19,7 @@ AIR v1 defines a **single-inference receipt**: one signed COSE envelope proving 
 | **Hash algorithm** | SHA-256 (FIPS 180-4) for all content hashes. SHA-384 for platform measurements (PCR/RTMR values). |
 | **Deterministic encoding** | CBOR deterministic encoding (RFC 8949 §4.2) for the signed payload |
 | **Verification procedure** | Six checks: signature (SIG), model hash (MHASH), model match (MODEL), measurement type (MTYPE), timestamp freshness (FRESH), measurement validity (MEAS) |
-| **Platform measurements** | Nitro PCR (pcr0/pcr1/pcr2/pcr8) and TDX MRTD/RTMR (mapped to same fields) |
+| **Platform measurements** | Nitro PCR (pcr0/pcr1/pcr2 with optional pcr3/pcr4/pcr8) and TDX MRTD/RTMR (mapped to pcr0..pcr4) |
 | **Test vectors** | Golden vectors for valid receipts, invalid signatures, expired timestamps, malformed measurements |
 | **CDDL schema** | Formal CDDL (RFC 8610) definition of receipt structure |
 | **eat_profile URI** | `https://spec.cyntrisec.com/air/v1` registered per EAT conventions |

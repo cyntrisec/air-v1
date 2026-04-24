@@ -31,3 +31,7 @@ docs/submission/nccoe-*.txt
 
 # Personal submission/process workspace (keep local, not GitHub)
 docs/submission/
+.env
+.env.*
+*.pem
+*.key

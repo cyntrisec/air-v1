@@ -118,8 +118,8 @@ These claims use negative integer keys to avoid collision with IANA CWT claim re
 |----------|-------|
 | CBOR type | bstr .size 32 |
 | Required | Yes |
-| Semantics | SHA-256 of model weights. The cryptographic binding between the receipt and a specific model artifact. |
-| Verification | MHASH check: verifier MUST compare against a known-good hash when model identity matters. This is the primary model identity proof. |
+| Semantics | SHA-256 binding for the model artifact set used for the inference. |
+| Verification | MHASH check: verifier MUST compare against a known-good hash when model identity matters. This is application-layer model identity evidence, not by itself proof of hardware-attested loading or execution. |
 | Hash scheme | See `model_hash_scheme` (key -65549, optional) for how the hash was computed. When absent, treat model_hash as opaque. |
 
 ### request_hash — key -65540
@@ -200,8 +200,8 @@ These claims use negative integer keys to avoid collision with IANA CWT claim re
 |----------|-------|
 | CBOR type | tstr |
 | Required | Yes |
-| Semantics | Security mode of the workload. Value is implementation-defined; AIR v1 does not define a global registry for this field. |
-| Verification | Informational. Verifier MAY require a specific security mode by local policy. |
+| Semantics | Generic trust-state classification of the workload. AIR v1 defines a closed set of interoperable values: `production` and `evaluation`. |
+| Verification | Verifier MUST reject unknown values. Receipts marked `evaluation` MUST NOT satisfy production trust policy. Vendor-specific submodes are out of scope for AIR v1 and SHOULD be mapped to the generic value space. |
 
 ### model_hash_scheme — key -65549
 
@@ -235,6 +235,8 @@ The `enclave_measurements` claim (key -65543) contains a map whose structure dep
 | `"pcr0"` | bstr .size 48 | Yes | PCR0 — SHA-384 |
 | `"pcr1"` | bstr .size 48 | Yes | PCR1 — SHA-384 |
 | `"pcr2"` | bstr .size 48 | Yes | PCR2 — SHA-384 |
+| `"pcr3"` | bstr .size 48 | No | PCR3 — SHA-384 (optional) |
+| `"pcr4"` | bstr .size 48 | No | PCR4 — SHA-384 (optional) |
 | `"pcr8"` | bstr .size 48 | No | PCR8 — SHA-384 (optional) |
 | `"measurement_type"` | tstr | Yes | `"nitro-pcr"` |
 
@@ -245,11 +247,13 @@ The `enclave_measurements` claim (key -65543) contains a map whose structure dep
 | `"pcr0"` | bstr .size 48 | Yes | MRTD — SHA-384 |
 | `"pcr1"` | bstr .size 48 | Yes | RTMR0 — SHA-384 |
 | `"pcr2"` | bstr .size 48 | Yes | RTMR1 — SHA-384 |
+| `"pcr3"` | bstr .size 48 | No | RTMR2 — SHA-384 (optional) |
+| `"pcr4"` | bstr .size 48 | No | RTMR3 — SHA-384 (optional) |
 | `"measurement_type"` | tstr | Yes | `"tdx-mrtd-rtmr"` |
 
 ### 4.3 Cross-Platform Naming
 
-TDX registers are mapped to `pcr0`/`pcr1`/`pcr2` field names for verifier simplicity. The `measurement_type` field disambiguates semantics. This allows a single verifier codepath for measurement validation.
+TDX registers are mapped to `pcr0`..`pcr4` field names for verifier simplicity. The `measurement_type` field disambiguates semantics. This allows a single verifier codepath for measurement validation.
 
 ## 5. Migration from v0.1 Claims
 

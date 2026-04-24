@@ -55,6 +55,10 @@ That is the category boundary for this repository:
 
 This split is non-destructive: `EphemeralML-cyntrisec` remains the current production implementation, while this repository keeps the AIR v1 standards surface stable and independently reviewable.
 
+## `-02` Note
+
+The live `-02` implementation and draft work land first in `EphemeralML-cyntrisec` (`spec/v1/ietf/`, `common/src/air_receipt.rs`, `common/src/air_verify.rs`). This repository remains the standalone AIR standards workspace and may lag slightly while those changes are being copied back. If a reviewer needs the current `-02` behavior, use `EphemeralML-cyntrisec` as the implementation reference.
+
 ## Contacts
 
 - Primary author/submission email: `borys@cyntrisec.com`
