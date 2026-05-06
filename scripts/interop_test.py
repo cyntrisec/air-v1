@@ -148,7 +148,7 @@ def parse_receipt_cose(receipt_bytes: bytes) -> tuple[bytes, dict[Any, Any], byt
         fail(1, "COSE", "COSE_DECODE_FAILED", f"expected tag 18, got tag {decoded.tag}")
 
     value = decoded.value
-    if not isinstance(value, list) or len(value) != 4:
+    if not isinstance(value, (list, tuple)) or len(value) != 4:
         fail(1, "COSE", "COSE_DECODE_FAILED", "COSE_Sign1 must be a 4-element array")
 
     protected, unprotected, payload, signature = value
