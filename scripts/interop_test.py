@@ -21,6 +21,7 @@ import argparse
 import json
 import sys
 import time
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -154,14 +155,14 @@ def parse_receipt_cose(receipt_bytes: bytes) -> tuple[bytes, dict[Any, Any], byt
     protected, unprotected, payload, signature = value
     if not isinstance(protected, (bytes, bytearray)):
         fail(1, "COSE", "COSE_DECODE_FAILED", "protected header is not bstr")
-    if not isinstance(unprotected, dict):
+    if not isinstance(unprotected, Mapping):
         fail(1, "COSE", "COSE_DECODE_FAILED", "unprotected header is not a map")
     if not isinstance(payload, (bytes, bytearray)) or len(payload) == 0:
         fail(1, "PAYLOAD", "MISSING_PAYLOAD", "payload missing or empty")
     if not isinstance(signature, (bytes, bytearray)):
         fail(2, "SIG", "BAD_SIG_LENGTH", "signature is not bstr")
 
-    return bytes(protected), unprotected, bytes(payload), bytes(signature)
+    return bytes(protected), dict(unprotected), bytes(payload), bytes(signature)
 
 
 def decode_protected_header(protected_bstr: bytes) -> dict[Any, Any]:
@@ -171,9 +172,9 @@ def decode_protected_header(protected_bstr: bytes) -> dict[Any, Any]:
         hdr = cbor2.loads(protected_bstr)
     except Exception as exc:
         fail(1, "COSE", "COSE_DECODE_FAILED", f"protected header decode failed: {exc}")
-    if not isinstance(hdr, dict):
+    if not isinstance(hdr, Mapping):
         fail(1, "COSE", "COSE_DECODE_FAILED", "protected header is not a map")
-    return hdr
+    return dict(hdr)
 
 
 def verify_sig_structure(protected_bstr: bytes, payload: bytes, signature: bytes, public_key: bytes) -> None:
@@ -214,8 +215,9 @@ def decode_and_validate_claims(payload: bytes) -> dict[Any, Any]:
         claims = cbor2.loads(payload)
     except Exception as exc:
         fail(1, "CLAIMS_DECODE", "PAYLOAD_NOT_MAP", f"claims decode failed: {exc}")
-    if not isinstance(claims, dict):
+    if not isinstance(claims, Mapping):
         fail(1, "CLAIMS_DECODE", "PAYLOAD_NOT_MAP", "payload is not a CBOR map")
+    claims = dict(claims)
 
     # Layer 1-ish (parse/profile): eat_profile
     profile = ensure_type(claims, EAT_PROFILE, str, "EAT_PROFILE")
@@ -283,7 +285,7 @@ def decode_and_validate_claims(payload: bytes) -> dict[Any, Any]:
             fail(3, check, f"WRONG_TYPE:{check}", f"{check} must be unsigned")
 
     # Measurements
-    measurements = ensure_type(claims, AIR_ENCLAVE_MEASUREMENTS, dict, "MEAS")
+    measurements = dict(ensure_type(claims, AIR_ENCLAVE_MEASUREMENTS, Mapping, "MEAS"))
     mtype = measurements.get("measurement_type")
     if not isinstance(mtype, str):
         fail(3, "MTYPE", "UNKNOWN_MTYPE:<non-string>", "measurement_type missing or not a string")
