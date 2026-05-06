@@ -47,11 +47,11 @@ That is the category boundary for this repository:
 - `scripts/` - Interop tooling
 - `docs/` - Verification reports, submission checklists, and claim/evidence support docs
 
-## Baseline Source
+## Sync Status
 
-- Source repository: `EphemeralML-cyntrisec`
-- Source commit: `4b4091c`
-- Snapshot date: `2026-02-28`
+- Canonical implementation repository: [`cyntrisec/EphemeralML`](https://github.com/cyntrisec/EphemeralML)
+- This standalone repository is synchronized through AIR draft `-02` semantics as of `2026-04-24`.
+- For implementation behavior newer than this repository, use `EphemeralML` as the source of truth.
 
 This split is non-destructive: `EphemeralML-cyntrisec` remains the current production implementation, while this repository keeps the AIR v1 standards surface stable and independently reviewable.
 
