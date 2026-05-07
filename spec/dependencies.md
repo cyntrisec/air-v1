@@ -1,8 +1,8 @@
 # AIR v1 — Normative Dependencies
 
 **Issue:** #66
-**Status:** FROZEN (M0)
-**Date:** 2026-02-25
+**Status:** AIR v1.0.x stable
+**Original freeze date:** 2026-02-25
 
 ## 1. Normative References
 
@@ -76,9 +76,9 @@ not define `kid` or any other unprotected header parameter.
 | eat_profile | 265 | tstr | Yes | RFC 9711 — `"https://spec.cyntrisec.com/air/v1"` |
 | eat_nonce | 10 | bstr .size (8..64) | Optional | RFC 9711 — challenge nonce for replay resistance |
 
-### AIR Private Claims (negative integer keys, range TBD)
+### AIR Private Claims (negative integer keys)
 
-Private claims use negative integer keys to avoid collision with IANA-registered CWT claims.
+Private claims use negative integer keys to avoid collision with IANA-registered CWT claims. AIR v1 assigns `-65537` through `-65549`; `-65550` through `-65599` are reserved for future v1.x optional extensions.
 
 | Claim | Key | Type | Required | Description |
 |-------|-----|------|----------|-------------|
@@ -93,8 +93,8 @@ Private claims use negative integer keys to avoid collision with IANA-registered
 | sequence_number | -65545 | uint | Yes | Monotonic counter within session |
 | execution_time_ms | -65546 | uint | Yes | Inference wall-clock time (ms) |
 | memory_peak_mb | -65547 | uint | Yes | Peak memory usage (MB) |
-| security_mode | -65548 | tstr | Yes | Security mode identifier |
-| model_hash_scheme | -65549 | tstr | No | How model_hash was computed (Issue #80) |
+| security_mode | -65548 | tstr | Yes | Closed trust-state value: `production` or `evaluation` |
+| model_hash_scheme | -65549 | tstr | No | Closed hash-scheme value: `sha256-single`, `sha256-concat`, or `sha256-manifest` |
 
 ## 6. Rust Crate Dependencies
 

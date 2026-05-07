@@ -4,7 +4,9 @@ A cryptographically signed proof that an ML inference was executed inside a hard
 
 ## Status
 
-**v1.0:** FROZEN — All normative documents locked. Issue #80 (model_hash_scheme) resolved.
+**Tagged release:** `v1.0.1` — latest public GitHub release.
+
+**Main branch:** AIR v1 wire format is stable, but this standalone repo may receive wire-compatible clarifications and verifier-harness hardening between tags. Use the latest `v1.0.x` tag when an exact frozen snapshot is required.
 
 ## Naming and RATS Positioning (Non-Normative)
 
@@ -54,10 +56,12 @@ docs/                Publication docs, submission checklists
 
 ## IETF Internet-Draft (Non-Normative)
 
-The current local IETF Internet-Draft revision (`draft-tsyrulnikov-rats-attested-inference-receipt-01`)
-is maintained under `draft/`, alongside the older `-00` snapshot. It is a non-normative
-presentation of the AIR v1 specification for IETF review and is not part of the normative
-specification freeze.
+The rendered IETF Internet-Draft snapshots currently checked into `draft/` are
+`draft-tsyrulnikov-rats-attested-inference-receipt-00` and `-01`. Live `-02`
+work lands first in the canonical `EphemeralML` implementation repository and is
+copied back here when the standalone standards workspace is refreshed. The draft
+artifacts are non-normative presentations of the AIR v1 specification for IETF
+review.
 
 ## License
 

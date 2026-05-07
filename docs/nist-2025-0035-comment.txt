@@ -6,6 +6,8 @@ Date: 2026-02-28
 Contact: borys@cyntrisec.com
 Selected Questions: 2(a), 3(a), 3(b), 4(a), 4(d)
 
+Historical submitted-comment artifact. This file preserves the language used for the NIST comment packet; current AIR claim language may be narrower in spec/limitations-v1.md, spec/claim-mapping.md, and spec/interop-kit.md.
+
 
 
 Executive Summary

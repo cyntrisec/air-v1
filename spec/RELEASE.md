@@ -4,6 +4,8 @@
 **Frozen baseline tag:** `spec-frozen-baseline` (commit `6ab08ea`)
 **Current tag:** `v1.0.1` (post-freeze normative tightening + CI, 2026-03-15)
 
+**Main-branch note:** commits after `v1.0.1` include wire-compatible clarifications and conformance-harness hardening. Use tag `v1.0.1` when an exact released snapshot is required; use `main` when evaluating the current standalone AIR standards workspace.
+
 ## Summary
 
 Attested Inference Receipt (AIR) v1.0 is the first stable release of the receipt specification for confidential AI inference. It defines a COSE_Sign1 envelope carrying CWT claims with EAT profile identification, signed with Ed25519.
@@ -14,9 +16,16 @@ Attested Inference Receipt (AIR) v1.0 is the first stable release of the receipt
 - Added `PROTECTED_ONLY` interop verification check
 - Added CI: interop vector tests, normative drift detection, CDDL validation
 
+**Post-v1.0.1 main-branch hardening** (wire-format compatible):
+- Replaced vendor-specific `security_mode` examples with the generic AIR trust-state values `production` and `evaluation`.
+- Clarified `model_hash` as model artifact-set identity rather than only single weights-file identity.
+- Added optional Nitro `pcr3`/`pcr4` and TDX `pcr3`/`pcr4` mapping for RTMR2/RTMR3.
+- Tightened the standalone Python interop harness to reject non-empty unprotected headers, oversized receipts, extra protected header parameters, non-deterministic CBOR, unknown or duplicate claim keys, invalid nonce length, zero `iat`, empty text claims, and unknown measurement keys.
+- Tightened CDDL to encode the closed `security_mode` and `model_hash_scheme` value sets.
+
 ## What's in this release
 
-### Normative documents (all FROZEN)
+### Normative documents (v1.0 release baseline)
 
 | Document | Description |
 |----------|-------------|
@@ -26,7 +35,7 @@ Attested Inference Receipt (AIR) v1.0 is the first stable release of the receipt
 | `threat-model.md` | 13 threats analyzed with trust assumptions |
 | `limitations-v1.md` | 9 explicit non-claims (L-1 through L-9) |
 | `naming.md` | Standard name and versioning policy |
-| `cddl/air-v1.cddl` | Formal CDDL schema (RFC 8610) |
+| `air-v1.cddl` | Formal CDDL schema (RFC 8610) |
 | `interop-kit.md` | Quick-start for external implementors |
 
 ### Golden test vectors (10 total)
@@ -71,8 +80,8 @@ See `limitations-v1.md` for the full list. Key items:
 
 ## v1.x extension rules
 
-1. New optional claims may use keys -65550 to -65599
-2. New claims must not be required
-3. New measurement_type variants may be added
-4. Protected header must not gain new required fields
-5. New `model_hash_scheme` values may be registered
+1. Keys -65550 to -65599 are reserved for future optional claims, but are not valid in the current v1.0.x profile
+2. Current v1.0.x verifiers are fail-closed on unknown claims
+3. New measurement_type variants may be added only by future spec update; current verifiers reject unknown values
+4. Protected header must not gain new required fields; current verifiers reject unknown protected parameters
+5. New `model_hash_scheme` values may be registered only by future spec update; current verifiers reject unknown values

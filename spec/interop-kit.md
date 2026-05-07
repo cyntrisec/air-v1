@@ -1,7 +1,7 @@
 # AIR v1 — Interop Kit
 
-**Status:** v1.0 FROZEN
-**Date:** 2026-02-25
+**Status:** AIR v1.0.x stable
+**Original freeze date:** 2026-02-25
 
 > **Production note (2026-02-25):** AIR v1 receipts are now emitted in live
 > inference flows on both AWS Nitro and GCP Confidential Space. The receipts
@@ -81,6 +81,8 @@ The map at key -65543 contains:
 | `"pcr0"` | bstr(48) | Yes |
 | `"pcr1"` | bstr(48) | Yes |
 | `"pcr2"` | bstr(48) | Yes |
+| `"pcr3"` | bstr(48) | No |
+| `"pcr4"` | bstr(48) | No |
 | `"pcr8"` | bstr(48) | No (Nitro only) |
 
 ## 4. Golden Vectors
@@ -122,6 +124,7 @@ A conformant verifier MUST implement these checks:
 - [ ] **MTYPE**: measurement_type is `"nitro-pcr"` or `"tdx-mrtd-rtmr"`
 - [ ] **SIZE**: Receipt must be ≤ 65,536 bytes (64 KB)
 - [ ] **UNPROTECTED**: Unprotected header must be empty
+- [ ] **DETERMINISTIC_CBOR**: Protected header and payload must use deterministic CBOR encoding per RFC 8949 §4.2.1
 - [ ] **CLOSED_MAP**: Reject unknown integer claim keys. Reject duplicate keys in both the claims map and the enclave_measurements map.
 - [ ] **IAT_NONZERO**: `iat` must not be zero (Unix epoch is not a valid receipt timestamp)
 - [ ] **TEXT_BOUNDS**: Text claims must be non-empty. Max lengths: iss ≤ 256, model_id ≤ 256, model_version ≤ 128, policy_version ≤ 256, security_mode ≤ 64, model_hash_scheme ≤ 64.
@@ -189,8 +192,8 @@ def verify_air_v1(receipt_bytes, public_key_bytes):
 
 | Language | Library / Package | Status | Coverage | Last Verified | Details |
 |----------|--------------------|--------|----------|---------------|---------|
-| Rust | `ephemeral-ml-common` (this repo) | Reference implementation — **emitted in production E2E** | AIR verifier + vectors + policy hooks + live emission | 2026-02-25 | [implementation-status.md](implementation-status.md) |
-| Python | `scripts/interop_test.py` | Same-team independent verifier (third-party validation pending) | AIR v1 vector verification harness (COSE parse + Sig_structure verify + claims/policy checks) | 2026-02-25 (local + fresh VM `10/10`) | M4b: external third-party interop run pending |
+| Rust | `ephemeral-ml-common` in [`cyntrisec/EphemeralML`](https://github.com/cyntrisec/EphemeralML) | Canonical reference implementation | AIR verifier + vectors + policy hooks + live emission | 2026-05-06 | [implementation-status.md](implementation-status.md) |
+| Python | `scripts/interop_test.py` | Same-team independent verifier (third-party validation pending) | AIR v1 vector verification harness (COSE parse + Sig_structure verify + claims/policy checks) | 2026-05-06 (local `10/10` vectors + `10/10` hardening regressions) | M4b: external third-party interop run pending |
 
 To register your implementation, open an issue or PR.
 

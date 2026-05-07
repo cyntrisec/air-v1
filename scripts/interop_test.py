@@ -2,7 +2,7 @@
 """
 AIR v1 vector interoperability test harness.
 
-This script verifies all AIR v1 golden vectors in spec/v1/vectors/ without
+This script verifies all AIR v1 golden vectors in vectors/ without
 depending on the EphemeralML Rust codebase. It performs:
 
 - COSE_Sign1 parsing (CBOR tag 18)
@@ -34,7 +34,7 @@ except ImportError as exc:  # pragma: no cover - import guard
 
 try:
     from nacl.exceptions import BadSignatureError
-    from nacl.signing import VerifyKey
+    from nacl.signing import SigningKey, VerifyKey
 except ImportError as exc:  # pragma: no cover - import guard
     print("Missing dependency: pynacl (pip install cbor2 pynacl)", file=sys.stderr)
     raise SystemExit(2) from exc
@@ -66,12 +66,44 @@ AIR_PROFILE_URI = "https://spec.cyntrisec.com/air/v1"
 ALLOWED_MEASUREMENT_TYPES = {"nitro-pcr", "tdx-mrtd-rtmr"}
 ALLOWED_MODEL_HASH_SCHEMES = {"sha256-single", "sha256-concat", "sha256-manifest"}
 ALLOWED_SECURITY_MODES = {"production", "evaluation"}
+MAX_RECEIPT_BYTES = 65_536
 
 COSE_TAG_SIGN1 = 18
 COSE_ALG_KEY = 1
 COSE_CONTENT_TYPE_KEY = 3
 COSE_ALG_EDDSA = -8
 COSE_CONTENT_TYPE_CWT = 61
+ALLOWED_PROTECTED_HEADER_KEYS = {COSE_ALG_KEY, COSE_CONTENT_TYPE_KEY}
+ALLOWED_CLAIM_KEYS = {
+    CWT_ISS,
+    CWT_IAT,
+    CWT_CTI,
+    EAT_NONCE,
+    EAT_PROFILE,
+    AIR_MODEL_ID,
+    AIR_MODEL_VERSION,
+    AIR_MODEL_HASH,
+    AIR_REQUEST_HASH,
+    AIR_RESPONSE_HASH,
+    AIR_ATTESTATION_DOC_HASH,
+    AIR_ENCLAVE_MEASUREMENTS,
+    AIR_POLICY_VERSION,
+    AIR_SEQUENCE_NUMBER,
+    AIR_EXECUTION_TIME_MS,
+    AIR_MEMORY_PEAK_MB,
+    AIR_SECURITY_MODE,
+    AIR_MODEL_HASH_SCHEME,
+}
+ALLOWED_MEASUREMENT_KEYS = {"measurement_type", "pcr0", "pcr1", "pcr2", "pcr3", "pcr4", "pcr8"}
+TEXT_BOUNDS = {
+    CWT_ISS: ("iss", 256),
+    AIR_MODEL_ID: ("model_id", 256),
+    AIR_MODEL_VERSION: ("model_version", 128),
+    AIR_POLICY_VERSION: ("policy_version", 256),
+    AIR_SECURITY_MODE: ("security_mode", 64),
+    AIR_MODEL_HASH_SCHEME: ("model_hash_scheme", 64),
+}
+TEST_SIGNING_SEED = bytes([0x2A]) * 32
 
 
 @dataclass
@@ -138,6 +170,9 @@ def load_json(path: Path) -> dict[str, Any]:
 
 
 def parse_receipt_cose(receipt_bytes: bytes) -> tuple[bytes, dict[Any, Any], bytes, bytes]:
+    if len(receipt_bytes) > MAX_RECEIPT_BYTES:
+        fail(1, "SIZE", "RECEIPT_TOO_LARGE", f"receipt length {len(receipt_bytes)} exceeds {MAX_RECEIPT_BYTES}")
+
     try:
         decoded = cbor2.loads(receipt_bytes)
     except Exception as exc:
@@ -157,24 +192,134 @@ def parse_receipt_cose(receipt_bytes: bytes) -> tuple[bytes, dict[Any, Any], byt
         fail(1, "COSE", "COSE_DECODE_FAILED", "protected header is not bstr")
     if not isinstance(unprotected, Mapping):
         fail(1, "COSE", "COSE_DECODE_FAILED", "unprotected header is not a map")
+    unprotected = dict(unprotected)
+    if unprotected:
+        fail(1, "UNPROTECTED", "UNPROTECTED_NOT_EMPTY", "AIR v1 requires an empty unprotected header")
     if not isinstance(payload, (bytes, bytearray)) or len(payload) == 0:
         fail(1, "PAYLOAD", "MISSING_PAYLOAD", "payload missing or empty")
     if not isinstance(signature, (bytes, bytearray)):
         fail(2, "SIG", "BAD_SIG_LENGTH", "signature is not bstr")
 
-    return bytes(protected), dict(unprotected), bytes(payload), bytes(signature)
+    return bytes(protected), unprotected, bytes(payload), bytes(signature)
+
+
+def cbor_read_uint(data: bytes, pos: int, ai: int, layer: int, check: str) -> tuple[int, int]:
+    if ai < 24:
+        return ai, pos
+    if ai == 24:
+        return data[pos], pos + 1
+    if ai == 25:
+        return int.from_bytes(data[pos : pos + 2], "big"), pos + 2
+    if ai == 26:
+        return int.from_bytes(data[pos : pos + 4], "big"), pos + 4
+    if ai == 27:
+        return int.from_bytes(data[pos : pos + 8], "big"), pos + 8
+    fail(layer, check, "INDEFINITE_LENGTH_FORBIDDEN", "indefinite-length CBOR is not allowed in AIR v1")
+
+
+def scan_cbor_value(data: bytes, pos: int, layer: int, check: str) -> tuple[Any, int]:
+    if pos >= len(data):
+        fail(layer, check, "CBOR_DECODE_FAILED", "unexpected end of CBOR data")
+
+    first = data[pos]
+    pos += 1
+    major = first >> 5
+    ai = first & 0x1F
+
+    if major == 0:
+        value, pos = cbor_read_uint(data, pos, ai, layer, check)
+        return ("uint", value), pos
+    if major == 1:
+        value, pos = cbor_read_uint(data, pos, ai, layer, check)
+        return ("nint", -1 - value), pos
+    if major == 2:
+        length, pos = cbor_read_uint(data, pos, ai, layer, check)
+        value = data[pos : pos + length]
+        if len(value) != length:
+            fail(layer, check, "CBOR_DECODE_FAILED", "truncated byte string")
+        return ("bstr", value), pos + length
+    if major == 3:
+        length, pos = cbor_read_uint(data, pos, ai, layer, check)
+        raw = data[pos : pos + length]
+        if len(raw) != length:
+            fail(layer, check, "CBOR_DECODE_FAILED", "truncated text string")
+        try:
+            return ("tstr", raw.decode("utf-8")), pos + length
+        except UnicodeDecodeError:
+            fail(layer, check, "CBOR_DECODE_FAILED", "invalid UTF-8 text string")
+    if major == 4:
+        length, pos = cbor_read_uint(data, pos, ai, layer, check)
+        values = []
+        for _ in range(length):
+            value, pos = scan_cbor_value(data, pos, layer, check)
+            values.append(value)
+        return ("array", tuple(values)), pos
+    if major == 5:
+        length, pos = cbor_read_uint(data, pos, ai, layer, check)
+        seen = set()
+        pairs = []
+        for _ in range(length):
+            key, pos = scan_cbor_value(data, pos, layer, check)
+            if key in seen:
+                fail(layer, check, "DUPLICATE_MAP_KEY", f"duplicate CBOR map key: {key!r}")
+            seen.add(key)
+            value, pos = scan_cbor_value(data, pos, layer, check)
+            pairs.append((key, value))
+        return ("map", tuple(pairs)), pos
+    if major == 6:
+        tag, pos = cbor_read_uint(data, pos, ai, layer, check)
+        value, pos = scan_cbor_value(data, pos, layer, check)
+        return ("tag", tag, value), pos
+    if major == 7:
+        if ai < 24:
+            return ("simple", ai), pos
+        if ai == 24:
+            return ("simple", data[pos]), pos + 1
+        if ai == 25:
+            return ("float16", data[pos : pos + 2]), pos + 2
+        if ai == 26:
+            return ("float32", data[pos : pos + 4]), pos + 4
+        if ai == 27:
+            return ("float64", data[pos : pos + 8]), pos + 8
+    fail(layer, check, "CBOR_DECODE_FAILED", f"unsupported CBOR major={major} ai={ai}")
+
+
+def assert_no_duplicate_cbor_map_keys(encoded: bytes, layer: int, check: str) -> None:
+    try:
+        _value, pos = scan_cbor_value(encoded, 0, layer, check)
+    except AirVerifyError:
+        raise
+    except Exception as exc:
+        fail(layer, check, "CBOR_DECODE_FAILED", f"CBOR duplicate-key scan failed: {exc}")
+    if pos != len(encoded):
+        fail(layer, check, "CBOR_TRAILING_DATA", "CBOR value has trailing bytes")
+
+
+def assert_deterministic_cbor(encoded: bytes, value: Any, layer: int, check: str) -> None:
+    try:
+        canonical = cbor2.dumps(value, canonical=True)
+    except Exception as exc:
+        fail(layer, check, "CBOR_DECODE_FAILED", f"canonical CBOR re-encode failed: {exc}")
+    if canonical != encoded:
+        fail(layer, check, "NON_DETERMINISTIC_CBOR", "CBOR value is not deterministically encoded")
 
 
 def decode_protected_header(protected_bstr: bytes) -> dict[Any, Any]:
     if protected_bstr == b"":
         return {}
+    assert_no_duplicate_cbor_map_keys(protected_bstr, 1, "PROTECTED_ONLY")
     try:
         hdr = cbor2.loads(protected_bstr)
     except Exception as exc:
         fail(1, "COSE", "COSE_DECODE_FAILED", f"protected header decode failed: {exc}")
     if not isinstance(hdr, Mapping):
         fail(1, "COSE", "COSE_DECODE_FAILED", "protected header is not a map")
-    return dict(hdr)
+    assert_deterministic_cbor(protected_bstr, hdr, 1, "PROTECTED_ONLY")
+    hdr = dict(hdr)
+    unknown = set(hdr) - ALLOWED_PROTECTED_HEADER_KEYS
+    if unknown:
+        fail(1, "PROTECTED_ONLY", "PROTECTED_HEADER_NOT_CLOSED", f"unknown protected header key(s): {sorted(unknown)!r}")
+    return hdr
 
 
 def verify_sig_structure(protected_bstr: bytes, payload: bytes, signature: bytes, public_key: bytes) -> None:
@@ -211,13 +356,20 @@ def ensure_bstr_len(value: Any, expected_len: int, layer: int, check: str, code:
 
 
 def decode_and_validate_claims(payload: bytes) -> dict[Any, Any]:
+    assert_no_duplicate_cbor_map_keys(payload, 3, "CLOSED_MAP")
     try:
         claims = cbor2.loads(payload)
     except Exception as exc:
         fail(1, "CLAIMS_DECODE", "PAYLOAD_NOT_MAP", f"claims decode failed: {exc}")
     if not isinstance(claims, Mapping):
         fail(1, "CLAIMS_DECODE", "PAYLOAD_NOT_MAP", "payload is not a CBOR map")
+    assert_deterministic_cbor(payload, claims, 3, "DETERMINISTIC_CBOR")
     claims = dict(claims)
+    for key in claims:
+        if not isinstance(key, int):
+            fail(3, "CLOSED_MAP", "UNKNOWN_CLAIM_KEY", f"claim key is not an integer: {key!r}")
+        if key not in ALLOWED_CLAIM_KEYS:
+            fail(3, "CLOSED_MAP", "UNKNOWN_CLAIM_KEY", f"unknown claim key: {key}")
 
     # Layer 1-ish (parse/profile): eat_profile
     profile = ensure_type(claims, EAT_PROFILE, str, "EAT_PROFILE")
@@ -229,14 +381,21 @@ def decode_and_validate_claims(payload: bytes) -> dict[Any, Any]:
     iat = ensure_type(claims, CWT_IAT, int, "IAT")
     if iat < 0:
         fail(3, "IAT", "WRONG_TYPE:IAT", "iat must be unsigned")
+    if iat == 0:
+        fail(3, "IAT", "IAT_ZERO", "iat must not be zero")
     cti = ensure_type(claims, CWT_CTI, (bytes, bytearray), "CTI")
     cti_b = ensure_bstr_len(cti, 16, 3, "CTI", "BAD_CTI_LENGTH", "cti")
     if cti_b == b"\x00" * 16:
         fail(3, "CTI", "BAD_CTI_LENGTH", "cti is all zeros")
 
     # Optional nonce type
-    if EAT_NONCE in claims and not isinstance(claims[EAT_NONCE], (bytes, bytearray)):
-        fail(3, "NONCE", "WRONG_TYPE:NONCE", "eat_nonce must be bytes")
+    if EAT_NONCE in claims:
+        nonce = claims[EAT_NONCE]
+        if not isinstance(nonce, (bytes, bytearray)):
+            fail(3, "NONCE", "WRONG_TYPE:NONCE", "eat_nonce must be bytes")
+        nonce_len = len(bytes(nonce))
+        if nonce_len < 8 or nonce_len > 64:
+            fail(3, "NONCE", "BAD_NONCE_LENGTH", f"eat_nonce length {nonce_len} is outside 8..64 bytes")
 
     # Required AIR claims
     _ = ensure_type(claims, AIR_MODEL_ID, str, "MODEL_ID")
@@ -275,6 +434,18 @@ def decode_and_validate_claims(payload: bytes) -> dict[Any, Any]:
     security_mode = ensure_type(claims, AIR_SECURITY_MODE, str, "SECURITY_MODE")
     if security_mode not in ALLOWED_SECURITY_MODES:
         fail(3, "SECURITY_MODE", f"UNKNOWN_SECURITY_MODE:{security_mode}", f"unknown security_mode: {security_mode}")
+
+    for key, (name, max_len) in TEXT_BOUNDS.items():
+        if key not in claims:
+            continue
+        value = claims[key]
+        if not isinstance(value, str):
+            fail(3, name.upper(), f"WRONG_TYPE:{name}", f"{name} must be a string")
+        if not value:
+            fail(3, name.upper(), f"EMPTY_TEXT:{name}", f"{name} must be non-empty")
+        if len(value) > max_len:
+            fail(3, name.upper(), f"TEXT_TOO_LONG:{name}", f"{name} length {len(value)} exceeds {max_len}")
+
     for key, check in [
         (AIR_SEQUENCE_NUMBER, "SEQ"),
         (AIR_EXECUTION_TIME_MS, "EXEC_MS"),
@@ -286,6 +457,14 @@ def decode_and_validate_claims(payload: bytes) -> dict[Any, Any]:
 
     # Measurements
     measurements = dict(ensure_type(claims, AIR_ENCLAVE_MEASUREMENTS, Mapping, "MEAS"))
+    unknown_measurement_keys = set(measurements) - ALLOWED_MEASUREMENT_KEYS
+    if unknown_measurement_keys:
+        fail(
+            3,
+            "CLOSED_MAP",
+            "UNKNOWN_MEASUREMENT_KEY",
+            f"unknown measurement key(s): {sorted(unknown_measurement_keys)!r}",
+        )
     mtype = measurements.get("measurement_type")
     if not isinstance(mtype, str):
         fail(3, "MTYPE", "UNKNOWN_MTYPE:<non-string>", "measurement_type missing or not a string")
@@ -429,6 +608,114 @@ def verify_vector(vec: dict[str, Any], now_epoch: int) -> VerificationResult:
         return VerificationResult(ok=False, failure=exc.failure)
 
 
+def sign_test_receipt(protected_bstr: bytes, unprotected: dict[Any, Any], payload: bytes) -> bytes:
+    sig_structure = cbor2.dumps(["Signature1", protected_bstr, b"", payload])
+    signature = SigningKey(TEST_SIGNING_SEED).sign(sig_structure).signature
+    return cbor2.dumps(cbor2.CBORTag(COSE_TAG_SIGN1, [protected_bstr, unprotected, payload, signature]))
+
+
+def run_regression_checks(vectors_dir: Path, now_epoch: int, verbose: bool) -> int:
+    base = load_json(vectors_dir / "valid" / "v1-nitro-no-nonce.json")
+    receipt_bytes = hex_to_bytes(base["receipt_hex"], "receipt_hex")
+    protected_bstr, _unprotected, payload, signature = parse_receipt_cose(receipt_bytes)
+
+    cases: list[tuple[str, str, dict[str, Any]]] = []
+
+    non_empty_unprotected = dict(base)
+    non_empty_unprotected["receipt_hex"] = cbor2.dumps(
+        cbor2.CBORTag(COSE_TAG_SIGN1, [protected_bstr, {4: b"kid"}, payload, signature])
+    ).hex()
+    non_empty_unprotected.pop("payload_hex", None)
+    cases.append(("non-empty-unprotected-header", "UNPROTECTED_NOT_EMPTY", non_empty_unprotected))
+
+    oversized_receipt = dict(base)
+    oversized_receipt["receipt_hex"] = ("00" * (MAX_RECEIPT_BYTES + 1))
+    oversized_receipt.pop("payload_hex", None)
+    cases.append(("oversized-receipt", "RECEIPT_TOO_LARGE", oversized_receipt))
+
+    protected_map = cbor2.loads(protected_bstr)
+    protected_map[99] = "extra"
+    extra_protected_bstr = cbor2.dumps(protected_map, canonical=True)
+    extra_protected = dict(base)
+    extra_protected["receipt_hex"] = sign_test_receipt(extra_protected_bstr, {}, payload).hex()
+    extra_protected["payload_hex"] = payload.hex()
+    cases.append(("extra-protected-header", "PROTECTED_HEADER_NOT_CLOSED", extra_protected))
+
+    claims = cbor2.loads(payload)
+    claims[-65599] = b"extra"
+    unknown_claim_payload = cbor2.dumps(claims, canonical=True)
+    unknown_claim = dict(base)
+    unknown_claim["receipt_hex"] = sign_test_receipt(protected_bstr, {}, unknown_claim_payload).hex()
+    unknown_claim["payload_hex"] = unknown_claim_payload.hex()
+    cases.append(("unknown-claim-key", "UNKNOWN_CLAIM_KEY", unknown_claim))
+
+    duplicate_claim_payload = bytes([0xB1]) + payload[1:] + bytes.fromhex("3a0001000063647570")
+    duplicate_claim = dict(base)
+    duplicate_claim["receipt_hex"] = sign_test_receipt(protected_bstr, {}, duplicate_claim_payload).hex()
+    duplicate_claim["payload_hex"] = duplicate_claim_payload.hex()
+    cases.append(("duplicate-claim-key", "DUPLICATE_MAP_KEY", duplicate_claim))
+
+    noncanonical_claims = dict(reversed(list(cbor2.loads(payload).items())))
+    noncanonical_payload = cbor2.dumps(noncanonical_claims, canonical=False)
+    noncanonical = dict(base)
+    noncanonical["receipt_hex"] = sign_test_receipt(protected_bstr, {}, noncanonical_payload).hex()
+    noncanonical["payload_hex"] = noncanonical_payload.hex()
+    cases.append(("noncanonical-payload", "NON_DETERMINISTIC_CBOR", noncanonical))
+
+    iat_zero_claims = cbor2.loads(payload)
+    iat_zero_claims[CWT_IAT] = 0
+    iat_zero_payload = cbor2.dumps(iat_zero_claims, canonical=True)
+    iat_zero = dict(base)
+    iat_zero["receipt_hex"] = sign_test_receipt(protected_bstr, {}, iat_zero_payload).hex()
+    iat_zero["payload_hex"] = iat_zero_payload.hex()
+    cases.append(("iat-zero", "IAT_ZERO", iat_zero))
+
+    bad_nonce_claims = cbor2.loads(payload)
+    bad_nonce_claims[EAT_NONCE] = b"short"
+    bad_nonce_payload = cbor2.dumps(bad_nonce_claims, canonical=True)
+    bad_nonce = dict(base)
+    bad_nonce["receipt_hex"] = sign_test_receipt(protected_bstr, {}, bad_nonce_payload).hex()
+    bad_nonce["payload_hex"] = bad_nonce_payload.hex()
+    cases.append(("bad-nonce-length", "BAD_NONCE_LENGTH", bad_nonce))
+
+    empty_text_claims = cbor2.loads(payload)
+    empty_text_claims[AIR_MODEL_ID] = ""
+    empty_text_payload = cbor2.dumps(empty_text_claims, canonical=True)
+    empty_text = dict(base)
+    empty_text["receipt_hex"] = sign_test_receipt(protected_bstr, {}, empty_text_payload).hex()
+    empty_text["payload_hex"] = empty_text_payload.hex()
+    cases.append(("empty-model-id", "EMPTY_TEXT:model_id", empty_text))
+
+    unknown_measurement_claims = cbor2.loads(payload)
+    measurements = dict(unknown_measurement_claims[AIR_ENCLAVE_MEASUREMENTS])
+    measurements["unexpected"] = b"\x00" * 48
+    unknown_measurement_claims[AIR_ENCLAVE_MEASUREMENTS] = measurements
+    unknown_measurement_payload = cbor2.dumps(unknown_measurement_claims, canonical=True)
+    unknown_measurement = dict(base)
+    unknown_measurement["receipt_hex"] = sign_test_receipt(protected_bstr, {}, unknown_measurement_payload).hex()
+    unknown_measurement["payload_hex"] = unknown_measurement_payload.hex()
+    cases.append(("unknown-measurement-key", "UNKNOWN_MEASUREMENT_KEY", unknown_measurement))
+
+    passed = 0
+    print("\nAIR verifier regression checks:")
+    for name, expected_code, vec in cases:
+        result = verify_vector(vec, now_epoch)
+        if not result.ok and result.failure is not None and result.failure.code == expected_code:
+            print(f"PASS {name}: rejected with {expected_code}")
+            passed += 1
+            continue
+        if result.ok:
+            print(f"FAIL {name}: expected {expected_code}, got PASS")
+        else:
+            assert result.failure is not None
+            print(f"FAIL {name}: expected {expected_code}, got {result.failure.code}")
+            if verbose:
+                print(f"  reason: {result.failure.reason}")
+
+    print(f"Regression summary: {passed}/{len(cases)} passed")
+    return 0 if passed == len(cases) else 1
+
+
 def iter_vector_files(vectors_dir: Path, selected_name: str | None) -> list[Path]:
     files = sorted((vectors_dir / "valid").glob("*.json")) + sorted((vectors_dir / "invalid").glob("*.json"))
     if selected_name is None:
@@ -488,7 +775,7 @@ def main(argv: list[str]) -> int:
     default_vectors = (script_dir.parent / "vectors").resolve()
 
     parser = argparse.ArgumentParser(description="Run AIR v1 vector interoperability checks")
-    parser.add_argument("--vectors-dir", type=Path, default=default_vectors, help="Path to spec/v1/vectors")
+    parser.add_argument("--vectors-dir", type=Path, default=default_vectors, help="Path to AIR vectors directory")
     parser.add_argument("--vector", help="Run a single vector by filename or stem")
     parser.add_argument("--now-epoch", type=int, default=int(time.time()), help="Unix time for freshness checks")
     parser.add_argument("--verbose", action="store_true", help="Print failure reasons")
@@ -514,8 +801,9 @@ def main(argv: list[str]) -> int:
 
     total = len(files)
     failed = total - passed
+    regression_failed = run_regression_checks(args.vectors_dir, args.now_epoch, args.verbose)
     print(f"\nSummary: {passed}/{total} passed, {failed} failed")
-    return 0 if failed == 0 else 1
+    return 0 if failed == 0 and regression_failed == 0 else 1
 
 
 if __name__ == "__main__":

@@ -1,8 +1,8 @@
 # AIR v1 — Threat Model Summary
 
 **Issue:** #64
-**Status:** FROZEN (M0)
-**Date:** 2026-02-25
+**Status:** AIR v1.0.x stable
+**Original freeze date:** 2026-02-25
 
 ## 1. System Model
 

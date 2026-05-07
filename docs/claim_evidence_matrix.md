@@ -5,6 +5,8 @@
 **Implementation repo:** [github.com/cyntrisec/EphemeralML](https://github.com/cyntrisec/EphemeralML) — all `evidence/`, `benchmark_results_*/`, `scripts/`, and `docs/benchmarks.md` paths below are relative to that repository.
 **Purpose:** For every public claim, this file traces the exact value, source artifact, reproduction command, commit, and caveats. No claim without evidence. No evidence without context.
 
+**Historical note:** This matrix captures the 2026-02-28 publication packet. Some paths and counts reflect the original implementation repository layout at that date. For current AIR standalone repository conformance, use `spec/`, `vectors/`, and `scripts/interop_test.py`.
+
 ## Matrix
 
 ### Performance Claims
@@ -33,10 +35,10 @@
 
 | # | Claim | Exact Value | Source Artifact | Commit | Caveats |
 |---|-------|-------------|-----------------|--------|---------|
-| S-1 | AIR v1 spec frozen | v1.0 FROZEN, 8 normative docs | `spec/v1/RELEASE.md` | `d7c9d01` (tag `m3-spec-frozen`) | Tier 1+2 hardening (rejection paths) added post-freeze. Wire format unchanged. |
-| S-2 | 18 claims (16 required + 2 optional) | 5 standard CWT/EAT + 13 private | `spec/v1/claim-mapping.md` §2-3 | `a33dc8b` | eat_nonce and model_hash_scheme are optional. |
-| S-3 | 10 golden vectors (2 valid + 8 invalid) | Byte-stable post-hardening | `spec/v1/vectors/README.md` | `a33dc8b` | Vectors regenerated 2026-02-28, byte-identical to frozen vectors. |
-| S-4 | RFC 9711 EAT profile compliance | §6.3 positions documented | `spec/v1/claim-mapping.md` §6 | `a33dc8b` | Profile declaration table added 2026-02-28. |
+| S-1 | AIR v1 spec frozen | v1.0 FROZEN, 8 normative docs | `spec/RELEASE.md` | `d7c9d01` (tag `m3-spec-frozen`) | Publication-baseline claim. Later main-branch changes are wire-compatible clarifications and verifier hardening. |
+| S-2 | 18 claims (16 required + 2 optional) | 5 standard CWT/EAT + 13 private | `spec/claim-mapping.md` §2-3 | `a33dc8b` | eat_nonce and model_hash_scheme are optional. |
+| S-3 | 10 golden vectors (2 valid + 8 invalid) | Byte-stable post-hardening at publication baseline | `vectors/README.md` | `a33dc8b` | Current main-branch vectors may differ from the publication baseline after semantic refreshes. |
+| S-4 | RFC 9711 EAT profile compliance | §6.3 positions documented | `spec/claim-mapping.md` §6 | `a33dc8b` | Profile declaration table added 2026-02-28. |
 
 ## Evidence Freshness
 

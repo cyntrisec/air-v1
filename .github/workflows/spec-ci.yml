@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: pip install cbor2 pynacl
 
-      - name: Run AIR v1 interop test (10 golden vectors)
+      - name: Run AIR v1 interop test (10 vectors + hardening regressions)
         run: python3 scripts/interop_test.py --verbose
 
   normative-drift:
@@ -83,7 +83,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install cddl CLI
-        run: cargo install cddl --locked 2>/dev/null || echo "cddl install failed -- skipping validation"
+        run: cargo install cddl --locked
 
       - name: Validate air-v1.cddl
         run: |

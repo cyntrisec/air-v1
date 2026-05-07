@@ -1,8 +1,8 @@
 # Standard Name and Versioning Policy
 
 **Issue:** #63
-**Status:** FROZEN (M0)
-**Date:** 2026-02-25
+**Status:** AIR v1.0.x stable
+**Original freeze date:** 2026-02-25
 
 ## Standard Name
 
@@ -36,9 +36,9 @@ Versions follow a two-part scheme: **`air-v{major}.{minor}`**
 ### Rules
 
 1. **v1.0** is the first standardized version (replaces EphemeralML's internal v0.1).
-2. A conformant verifier for v1.x MUST accept any v1.y receipt where y >= x.
+2. A conformant verifier MUST reject unknown required wire semantics. Current v1.0.x verifiers are fail-closed on unknown claim keys, unknown protected header parameters, unknown measurement types, and unknown model hash schemes.
 3. Major version bumps (v2.0) require a new `eat_profile` URI.
-4. Minor version bumps (v1.1) MUST NOT remove or redefine existing claims.
+4. Minor version bumps (v1.1) MUST NOT remove or redefine existing claims. Any extension that keeps the v1 `eat_profile` URI MUST define explicit downgrade behavior for older fail-closed verifiers.
 
 ## EAT Profile URI
 
@@ -63,7 +63,7 @@ https://spec.cyntrisec.com/air/v{major}
 Spec documents use the pattern:
 
 ```
-spec/v1/<document-name>.md     — prose specification
-spec/v1/cddl/<name>.cddl       — CDDL schema fragments
-spec/v1/vectors/<category>/     — test vectors (CBOR files)
+spec/<document-name>.md         — prose specification
+spec/air-v1.cddl                — CDDL schema
+vectors/<category>/             — test vectors
 ```

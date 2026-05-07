@@ -1,8 +1,8 @@
 # AIR v1 — Scope and Non-Goals
 
 **Issue:** #62
-**Status:** FROZEN (M0)
-**Date:** 2026-02-25
+**Status:** AIR v1.0.x stable
+**Original freeze date:** 2026-02-25
 **Gating:** M1 implementation work MUST NOT begin until this document and all M0 deliverables are frozen. Any M1 issue that expands scope beyond what is defined here requires an amendment to this document first.
 
 ## 1. Scope — What v1 Defines
@@ -28,10 +28,10 @@ AIR v1 defines a **single-inference receipt**: one signed COSE envelope proving 
 
 v1 receipt measurements cover:
 
-- **AWS Nitro Enclaves** — PCR0/PCR1/PCR2/PCR8, measurement_type `"nitro-pcr"`
-- **Intel TDX** — MRTD/RTMR0/RTMR1, measurement_type `"tdx-mrtd-rtmr"`
+- **AWS Nitro Enclaves** — PCR0/PCR1/PCR2 required; PCR3/PCR4/PCR8 optional; measurement_type `"nitro-pcr"`
+- **Intel TDX** — MRTD/RTMR0/RTMR1 required; RTMR2/RTMR3 optional and mapped to `pcr3`/`pcr4`; measurement_type `"tdx-mrtd-rtmr"`
 
-Additional platforms (AMD SEV-SNP, ARM CCA) may be added in v1.x minor versions without breaking existing verifiers.
+Additional platforms (AMD SEV-SNP, ARM CCA) may be added in a future v1.x update, but current v1.0.x verifiers are expected to reject unknown `measurement_type` values until updated.
 
 ## 2. Non-Goals — What v1 Does NOT Define
 

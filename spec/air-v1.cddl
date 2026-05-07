@@ -1,6 +1,6 @@
 ; Attested Inference Receipt (AIR) v1 — CDDL Schema
-; Status: v1.0 FROZEN
-; Date: 2026-02-25
+; Status: AIR v1.0.x stable (latest tagged release: v1.0.1)
+; Original freeze date: 2026-02-25
 ; References: RFC 9052 (COSE), RFC 8392 (CWT), RFC 9711 (EAT),
 ;             RFC 8949 (CBOR), RFC 8610 (CDDL)
 ;
@@ -69,10 +69,10 @@ air-claims = {
   -65545 => uint,            ; sequence_number (monotonic, session-scoped)
   -65546 => uint,            ; execution_time_ms
   -65547 => uint,            ; memory_peak_mb
-  -65548 => tstr,            ; security_mode
+  -65548 => security-mode,   ; security_mode
 
   ; --- Optional claims (v1.0) ---
-  ? -65549 => tstr,          ; model_hash_scheme (Issue #80)
+  ? -65549 => model-hash-scheme,  ; model_hash_scheme (Issue #80)
                               ;   Declares how model_hash was computed.
                               ;   Defined values:
                               ;     "sha256-single"  — SHA-256 of single weights file
@@ -88,7 +88,8 @@ air-claims = {
                               ;   include this claim.
 
   ; --- v1.x extension point ---
-  ; Future minor versions MAY add optional claims here.
+  ; Future minor versions MAY assign optional claims here after spec
+  ; amendment. These keys are not valid in the current v1.0.x profile.
   ; Key range reserved: -65550 to -65599
 }
 
@@ -98,6 +99,10 @@ air-claims = {
 
 sha256-hash = bstr .size 32   ; SHA-256 digest
 sha384-hash = bstr .size 48   ; SHA-384 digest (PCR/RTMR values)
+
+security-mode = "production" / "evaluation"
+
+model-hash-scheme = "sha256-single" / "sha256-concat" / "sha256-manifest"
 
 ; ============================================================
 ; Enclave Measurements

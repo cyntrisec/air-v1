@@ -8,6 +8,10 @@
 
 ---
 
+> Historical submitted-comment artifact. This file preserves the language used for the NIST comment packet; current AIR claim language may be narrower in `spec/limitations-v1.md`, `spec/claim-mapping.md`, and `spec/interop-kit.md`.
+
+---
+
 ## Executive Summary
 
 We describe the Attested Inference Receipt (AIR), an open receipt format for cryptographically proving what happened during a single AI inference inside a hardware-isolated environment. AIR v1 uses IETF standards (COSE_Sign1, CWT, EAT) to bind model identity, input/output hashes, platform attestation metadata, and operational telemetry in a signed envelope verified by any party with the Ed25519 public key. The format has been validated end-to-end on three confidential computing platforms (AWS Nitro Enclaves, GCP Confidential Space with Intel TDX, and GCP GPU with NVIDIA H100 CC-mode). We offer implementation-grounded answers to five NIST questions, covering technical controls, threat assessment, system assurance, environment constraints, and monitoring.

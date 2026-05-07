@@ -50,14 +50,14 @@ That is the category boundary for this repository:
 ## Sync Status
 
 - Canonical implementation repository: [`cyntrisec/EphemeralML`](https://github.com/cyntrisec/EphemeralML)
-- This standalone repository is synchronized through AIR draft `-02` semantics as of `2026-04-24`.
+- This standalone repository is synchronized through selected AIR draft `-02` semantic changes as of `2026-04-24` (generic `production` / `evaluation` trust-state values, model artifact-set wording, and expanded PCR/RTMR mapping).
 - For implementation behavior newer than this repository, use `EphemeralML` as the source of truth.
 
 This split is non-destructive: `EphemeralML-cyntrisec` remains the current production implementation, while this repository keeps the AIR v1 standards surface stable and independently reviewable.
 
-## `-02` Note
+## Internet-Draft Note
 
-The live `-02` implementation and draft work land first in `EphemeralML-cyntrisec` (`spec/v1/ietf/`, `common/src/air_receipt.rs`, `common/src/air_verify.rs`). This repository remains the standalone AIR standards workspace and may lag slightly while those changes are being copied back. If a reviewer needs the current `-02` behavior, use `EphemeralML-cyntrisec` as the implementation reference.
+Rendered Internet-Draft snapshots currently checked into this repository are `-00` and `-01`. The live `-02` implementation and draft work land first in `EphemeralML-cyntrisec` (`spec/v1/ietf/`, `common/src/air_receipt.rs`, `common/src/air_verify.rs`). This repository remains the standalone AIR standards workspace and may lag slightly while those changes are being copied back. If a reviewer needs the current `-02` behavior, use `EphemeralML-cyntrisec` as the implementation reference.
 
 ## Contacts
 

@@ -1,9 +1,9 @@
 # AIR v1 — EAT Claim Mapping
 
 **Issue:** #69
-**Status:** v1.0 FROZEN
-**Date:** 2026-02-25
-**Companion:** `cddl/air-v1.cddl` (wire schema)
+**Status:** AIR v1.0.x stable
+**Original freeze date:** 2026-02-25
+**Companion:** `air-v1.cddl` (wire schema)
 
 This document maps every AIR v1 receipt field to its CWT/EAT claim, CBOR key, type constraint, and verification semantics. It is the normative bridge between the M0 scope documents and the CDDL schema.
 
@@ -220,7 +220,7 @@ These claims use negative integer keys to avoid collision with IANA CWT claim re
 | `"sha256-concat"` | SHA-256 of deterministically concatenated weight files. Files MUST be concatenated in lexicographic filename order. The concatenation order MUST be reproducible from the model artifact directory. |
 | `"sha256-manifest"` | SHA-256 of a manifest document that lists per-file hashes. The manifest format is implementation-defined but MUST be self-describing (i.e., the manifest contains enough information to verify each file independently). |
 
-**Extensibility:** New scheme values MAY be registered in v1.x minor updates. Implementations MUST NOT invent unregistered scheme values.
+**Extensibility:** New scheme values MAY be registered in a future v1.x update. Implementations MUST NOT invent unregistered scheme values, and verifiers claiming only the current v1.0.x profile MUST reject unknown values.
 
 **Issue:** #80 (RESOLVED)
 
@@ -291,8 +291,9 @@ This section consolidates the mandatory profile positions per RFC 9711 §6.3.
 
 ## 7. v1.x Extension Rules
 
-1. New optional claims MAY be added in v1.x minor versions using keys -65550 to -65599.
-2. New claims MUST NOT be required — a v1.0 verifier must still accept v1.x receipts.
-3. New measurement_type variants MAY be added (e.g., `"sev-snp-vcek"` for AMD SEV-SNP).
-4. The protected header MUST NOT gain new required fields in v1.x.
-5. New `model_hash_scheme` values MAY be registered in v1.x minor updates.
+1. Keys -65550 to -65599 are reserved for future optional v1.x extensions. They are not valid in the current v1.0.x profile.
+2. Current v1.0.x verifiers are fail-closed: unknown claim keys MUST be rejected, including currently unassigned reserved keys.
+3. A future v1.x update that assigns reserved keys MUST define the downgrade behavior explicitly. It MUST NOT require current v1.0.x verifiers to ignore unknown claims.
+4. New measurement_type variants MAY be added in a future v1.x update (for example, `"sev-snp-vcek"` for AMD SEV-SNP), but current verifiers MUST reject unknown values.
+5. The protected header MUST NOT gain new required fields in v1.x. Current verifiers MUST reject unknown protected header parameters.
+6. New `model_hash_scheme` values MAY be registered in a future v1.x update. Current verifiers MUST reject unknown values.

@@ -1,8 +1,8 @@
 # AIR v1 — Limitations and Non-Claims
 
 **Issue:** #65
-**Status:** FROZEN (M0)
-**Date:** 2026-02-25
+**Status:** AIR v1.0.x stable
+**Original freeze date:** 2026-02-25
 
 ## Purpose
 
@@ -21,17 +21,17 @@ AIR v1 receipts do **not** prove that input data, output data, or intermediate s
 **Correct claim:** "Data was processed inside an attested workload. The receipt proves the inference occurred."
 **Incorrect claim:** "The receipt proves data was irrecoverably deleted."
 
-### L-2: Model Hash Proves Identity, Not Correctness
+### L-2: Model Hash Proves Artifact Identity, Not Correctness
 
-AIR v1 includes a required `model_hash` claim — a SHA-256 of the model weights. This cryptographically binds the receipt to a specific model artifact.
+AIR v1 includes a required `model_hash` claim — a SHA-256 binding for the model artifact set used for the inference. This cryptographically binds the receipt to a specific model artifact set as defined by `model_hash_scheme`.
 
-- `model_hash` proves **which** model weights were loaded. A verifier with a known-good hash can confirm exact model identity.
+- `model_hash` proves **which** model artifact set was referenced by the receipt. A verifier with a known-good hash can confirm exact artifact identity for the declared hash scheme.
 - `model_id` and `model_version` are operator-assigned opaque strings for human readability. They are NOT the cryptographic binding — `model_hash` is.
-- `model_hash` does **not** prove the model behaves correctly, is free of bias, or matches a reference specification. It proves byte-level identity of the weights file.
-- Attestation documents (Nitro COSE, TDX quotes) measure the workload code/runtime, not the model weights. `model_hash` fills this gap — without it, a compromised workload could load arbitrary weights.
+- `model_hash` does **not** prove the model behaves correctly, is free of bias, or matches a reference specification. It proves byte-level identity of the declared artifact set.
+- Attestation documents (Nitro COSE, TDX quotes) measure the workload code/runtime, not model artifacts. `model_hash` fills this evidence gap only when the workload computes or verifies it honestly inside the attested boundary and the verifier compares it with a known-good value.
 - The optional `model_hash_scheme` claim (key -65549) declares how model_hash was computed. Defined values: `"sha256-single"`, `"sha256-concat"`, `"sha256-manifest"`. When absent, the hash is opaque. Implementations are RECOMMENDED to include this claim for reproducibility.
 
-**Correct claim:** "The receipt cryptographically identifies the exact model weights used via model_hash."
+**Correct claim:** "The receipt cryptographically identifies the declared model artifact set via model_hash."
 **Incorrect claim:** "The receipt proves the model is unbiased/correct/safe."
 
 ### L-3: Attestation Document NOT Verified by Receipt

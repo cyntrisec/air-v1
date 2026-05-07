@@ -1,8 +1,9 @@
 # AIR v1 — Implementation Status (Reference Verifier)
 
 **Status:** Active reference implementation (Rust)  
-**Date:** 2026-02-25  
-**Normative baseline:** AIR v1.0 FROZEN (`m3-spec-frozen`, commit `d7c9d01`)
+**Original publication date:** 2026-02-25
+**Last standalone-repo audit:** 2026-05-06
+**Latest tagged baseline:** `v1.0.1`
 
 This document is non-normative. It summarizes what is implemented in the current Rust
 reference implementation, what is covered by conformance tests, and what remains as backlog.
@@ -23,7 +24,7 @@ AIR v1 does **not** include pipeline chaining (vNEXT), SCITT integration, or del
 
 ## 2. Reference Implementation (Rust)
 
-Primary implementation:
+Primary implementation lives in [`cyntrisec/EphemeralML`](https://github.com/cyntrisec/EphemeralML):
 
 - `common/src/air_receipt.rs` — AIR v1 build/parse/signature helpers
 - `common/src/air_verify.rs` — four-layer verifier + structured `AirCheckCode`
@@ -64,7 +65,7 @@ Primary implementation:
 
 ## 3. Conformance Corpus Status
 
-Current AIR v1 corpus (`spec/v1/vectors/`):
+Current AIR v1 corpus (`vectors/`):
 
 - **2 valid vectors**
 - **8 invalid vectors**
@@ -151,7 +152,7 @@ See `docs/security/M2_TRUST_MATRIX_STATUS.md` for the full T1/T2/T3/T4 matrix an
 
 ## 5. E2E Emission Status
 
-**AIR v1 receipts are emitted in GCP production E2E inference paths** (commit `a421e98`, 2026-02-25). The AWS Nitro E2E path still emits legacy JSON receipts; AIR v1 emission on Nitro is backlog.
+AIR v1 receipts are emitted by the canonical EphemeralML implementation. Historical publication-baseline notes below describe the 2026-02-25 state; for current runtime behavior, use the `EphemeralML` repository as source of truth.
 
 ### Where AIR v1 is emitted
 
@@ -183,7 +184,7 @@ Legacy JSON receipts continue to work unchanged. No flags needed.
 - Legacy `receipt.json` continues in all paths
 - If `model_hash` is unavailable, AIR v1 is simply not emitted (non-fatal)
 
-### Latest cross-cloud verification run (2026-02-25)
+### Publication-baseline cross-cloud verification run (2026-02-25)
 
 - AWS Nitro E2E: PASS
 - GCP CPU (TDX / Confidential Space) E2E: PASS (strict AIR v1 verification enabled in `verify.sh`)
@@ -208,7 +209,7 @@ These do **not** change AIR v1 wire format validity, but matter for deployment a
 
 Ready now:
 
-- Frozen spec (`spec/v1/`)
+- Stable AIR v1 spec surface (`spec/`)
 - CDDL schema
 - Conformance vectors
 - Reference verifier
@@ -224,7 +225,7 @@ Still needed for M4 exit:
 
 ## 8. Test Coverage
 
-At the publication baseline, the workspace had **500+ tests passing** (`cargo test -q`):
+At the publication baseline, the workspace had **500+ tests passing** (`cargo test -q`). Later EphemeralML audits reported a larger test suite; this standalone repo does not vendor the Rust implementation.
 
 - 83 verification tests (AIR v1 4-layer verifier + golden vectors + platform attestation)
 - 59 receipt tests (legacy + AIR v1 round-trip, signing, compliance, property-based)
