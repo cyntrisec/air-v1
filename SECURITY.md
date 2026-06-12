@@ -9,7 +9,7 @@ If you discover a security vulnerability in the AIR v1 specification or referenc
 Instead, please use one of these channels:
 
 1. **GitHub Security Advisories** (preferred): [Report a vulnerability](https://github.com/cyntrisec/air-v1/security/advisories/new)
-2. **Email**: security@cyntrisec.com
+2. **Email**: contact@cyntrisec.com
 
 ### What to Include
 
